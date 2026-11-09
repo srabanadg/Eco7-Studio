@@ -17,11 +17,20 @@ button.danger{background:#a43239;color:white}
 #dataManager summary{font-size:16px}
 #resetFeedback{min-height:0;margin:12px 0 0}
 @media(max-width:720px){.reset-grid{grid-template-columns:1fr}}
+
+<style>
+.analysis-table input[data-analysis]{min-width:112px;max-width:165px;font-variant-numeric:tabular-nums}
+.analysis-table input[data-analysis].invalid{border-color:#bb4646;background:#fff1f1}
+.analysis-table input[data-analysis].has-formula{background:#eaf6f1;border-color:#9ac5b2}
+.calc-preview{display:block;min-height:17px;color:#50737b;font-size:11px;margin-top:3px}
+.calc-preview.invalid{color:#ad333a}
+.case-group-pill{background:#e9f4f2;border-radius:20px;padding:3px 9px;font-size:12px}
+.team-status{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.team-status span{border-radius:20px;border:1px solid #b6ced0;padding:4px 10px;font-size:12px;background:white}.team-status .done{background:#e7f4f0;border-color:#9cccbc}
 </style></head><body>
-<header><div class="row"><div><h1>Get Me My Candy</h1><div class="sub">BUS 702 · Eco7 · Distribution Game Studio <span style="font-size:11px;opacity:.8;white-space:nowrap">| v4: Activities + Reset</span></div></div><span class="status" id="connection">Connecting to Firebase…</span></div></header>
+<header><div class="row"><div><h1>Get Me My Candy</h1><div class="sub">BUS 702 · Eco7 · Distribution Game Studio <span style="font-size:11px;opacity:.8;white-space:nowrap">| v5: Formulas + 5 Case Teams</span></div></div><span class="status" id="connection">Connecting to Firebase…</span></div></header>
 <main class="wrap">
 <section class="panel" id="rolePanel"><div class="row"><div class="viewtabs"><button type="button" id="studentTab" class="active">Team view</button><button type="button" id="instructorTab">Instructor view</button></div><span class="tag" id="identity"></span></div>
-<div id="teamJoin"><p>Enter your class code and select your team. One browser per team submits decisions.</p><div class="topbar"><div><label for="studentRoom">Class code</label><input id="studentRoom" value="BUS702-ECO7" autocomplete="off"></div><div><label for="teamPick">Team</label><select id="teamPick" style="width:170px;padding:10px;border:1px solid #b6c7cc;border-radius:7px"><option value="Red">Red</option><option value="Green">Green</option></select></div><button id="join" type="button">Join team</button></div><p class="small muted" id="joinStatus"></p></div>
+<div id="teamJoin"><p>Enter your class code and select your team. One browser per group submits decisions. Choose Red/Green for the Candy Game, or Team 1–5 for the case worksheets.</p><div class="topbar"><div><label for="studentRoom">Class code</label><input id="studentRoom" value="BUS702-ECO7" autocomplete="off"></div><div><label for="teamPick">Team</label><select id="teamPick" style="width:170px;padding:10px;border:1px solid #b6c7cc;border-radius:7px"><optgroup label="Candy Game"><option value="Red">Red</option><option value="Green">Green</option></optgroup><optgroup label="Case Activities"><option value="Team 1">Team 1</option><option value="Team 2">Team 2</option><option value="Team 3">Team 3</option><option value="Team 4">Team 4</option><option value="Team 5">Team 5</option></optgroup></select></div><button id="join" type="button">Join team</button></div><p class="small muted" id="joinStatus"></p></div>
 <div id="teacherLogin" class="hidden"><div class="login"><div><label for="email">Instructor email</label><input id="email" type="email"></div><div><label for="password">Password</label><input id="password" type="password"></div><button id="login">Sign in</button><button id="logout" class="secondary hidden">Sign out</button></div><p class="small muted" id="authStatus"></p></div></section>
 <section id="analysisHub" class="hidden">
 <div class="analysis-tabs" id="analysisNav" role="navigation" aria-label="Studio activities"><button type="button" id="navCandy" class="active">Candy game</button><button type="button" id="navMargins">Case activity 1 · Channel margins</button><button type="button" id="navScenarios">Case activity 2 · Launch scenarios</button><button type="button" id="navReset">Reset data</button></div>
@@ -32,15 +41,15 @@ button.danger{background:#a43239;color:white}
 <div class="controls" style="margin:12px 0 16px"><button type="button" id="backupClass" class="secondary">Download class backup</button></div>
 <div class="reset-grid">
 <div class="reset-option"><h3>Reset one candy round</h3><p class="small muted">Remove Red and Green decisions and results for only the chosen round. Reopens that round for submissions.</p><div class="controls"><select id="resetRoundPick" aria-label="Round to reset"><option value="1">Round 1</option><option value="2">Round 2</option><option value="3">Round 3</option><option value="4">Round 4</option></select><button type="button" class="secondary" id="resetOneRound">Reset round</button></div></div>
-<div class="reset-option"><h3>Reset candy game</h3><p class="small muted">Clear decisions and scores for all four rounds and restore initial round visibility. Team memberships and case worksheets stay.</p><button type="button" class="secondary" id="resetCandy">Clear candy game</button></div>
-<div class="reset-option"><h3>Reset case worksheets</h3><p class="small muted">Delete both teams' margin and launch-scenario calculations, then hide both case activities from students.</p><button type="button" class="secondary" id="resetCase">Clear case worksheets</button></div>
-<div class="reset-option reset-warning"><h3>Start a fresh class</h3><p class="small muted">Delete all game and case submissions, release Red and Green team ownership, and hide all rounds except Round 1. The class code stays the same. Use this for a new cohort.</p><button type="button" id="resetAllClass" class="danger">Clear everything and release teams</button></div>
+<div class="reset-option"><h3>Reset candy game</h3><p class="small muted">Clear decisions and scores for all four rounds and restore initial round visibility. Candy Game memberships and all five case teams stay.</p><button type="button" class="secondary" id="resetCandy">Clear candy game</button></div>
+<div class="reset-option"><h3>Reset case worksheets</h3><p class="small muted">Delete all five case teams' margin and launch-scenario calculations, then hide both case activities from students.</p><button type="button" class="secondary" id="resetCase">Clear case worksheets</button></div>
+<div class="reset-option reset-warning"><h3>Start a fresh class</h3><p class="small muted">Delete all game and case submissions, release Red/Green and Team 1–5 ownership, and hide all rounds except Round 1. The class code stays the same. Use this for a new cohort.</p><button type="button" id="resetAllClass" class="danger">Clear everything and release teams</button></div>
 </div><p class="small" id="resetFeedback" role="status"></p>
 </div></section>
-<section class="panel hidden" id="analysisPanel">
+<section class="panel hidden" id="casePending"><h2>Case worksheets not released yet</h2><p>Your instructor will unlock Channel Margins and Launch Scenarios during the case discussion. You can return here once they are available.</p></section><section class="panel hidden" id="analysisPanel">
 <div class="row"><div><span class="pill" id="analysisPill"></span><h2 id="analysisTitle" style="margin-top:9px"></h2></div><span id="analysisSaved" class="small muted"></span></div>
-<p id="analysisIntro"></p><div id="analysisTeacherControls" class="hidden analysis-note"><div class="row"><div><b>Instructor release controls</b><p class="small muted">Students cannot see this activity until you unlock it.</p></div><button id="analysisUnlock"></button></div><div class="analysis-toolbar"><label for="analysisTeam">Review team</label><select id="analysisTeam" style="padding:8px;border:1px solid #aec0c6;border-radius:6px"><option>Red</option><option>Green</option></select><button id="analysisSolutions" class="secondary">Show instructor answer key</button></div></div>
-<div class="analysis-note" id="analysisStudentPrompt"></div><div class="analysis-grid" id="analysisTable"></div>
+<p id="analysisIntro"></p><div id="analysisTeacherControls" class="hidden analysis-note"><div class="row"><div><b>Instructor release controls</b><p class="small muted">Students cannot see this activity until you unlock it.</p></div><button id="analysisUnlock"></button></div><div class="analysis-toolbar"><label for="analysisTeam">Review team</label><select id="analysisTeam" style="padding:8px;border:1px solid #aec0c6;border-radius:6px"><option>Team 1</option><option>Team 2</option><option>Team 3</option><option>Team 4</option><option>Team 5</option></select><button id="analysisSolutions" class="secondary">Show instructor answer key</button></div><div id="analysisTeamStatus" class="team-status" aria-label="Team submission status"></div></div>
+<div class="analysis-note" id="analysisStudentPrompt"></div><p class="small muted">Excel-style calculations: enter <code>=400/60</code>, <code>3.25*5</code>, or <code>(4400*0.95)*105*12</code>. The cell displays the result; click it to edit the original expression.</p><div class="analysis-grid" id="analysisTable"></div>
 <div class="analysis-toolbar" style="margin-top:14px"><button id="analysisSave">Save team calculations</button><button id="analysisExport" class="secondary hidden">Export case analysis CSV</button></div><div id="analysisFeedback" class="small muted" style="margin-top:9px"></div>
 </section></section>
 <div id="studio" class="hidden"><section class="panel admin hidden" id="teacherSetup"><h2>Instructor controls</h2><div class="topbar"><div><label for="teacherRoom">Class code</label><input id="teacherRoom" value="BUS702-ECO7"></div><button id="openRoom" class="secondary">Open class</button><button id="createRoom">Create class</button></div><p id="roomStatus" class="small muted"></p><div class="controls"><button id="exportCsv" class="secondary">Export CSV</button></div></section>
@@ -65,7 +74,9 @@ const rounds=[
 {title:'Authorized distributors',short:'Channel incentives',intro:'Two independent authorized distributors can enter the dealer zone. Manufacturers may negotiate handling fees or bypass them.',rules:'ADs can move within the zone and collect candy in cups. Both manufacturers may use an AD; the AD can serve either. Ordinary intermediaries cost $0.10 per handling. Record the agreed AD rate per candy handled.',debrief:'Did using an AD guarantee attention? How did commissions affect effort? Who controlled access to the market?'},
 {title:'Limited demand',short:'Discuss',intro:'Imagine that each producer now has 25 candies, but customers will buy at most 40 in total.',rules:'Discussion only. No physical play or score entry. Consider how competition changes when demand is less than total supply.',debrief:'What changes when reaching the market is no longer enough? Would producers compete differently for intermediaries?'},
 {title:'Reliability and channel choice',short:'Discuss',intro:'Imagine that ten successful consecutive deliveries raise the price to $1.10, but an early failure reduces it to $0.90.',rules:'Discussion only. Consider how distribution quality affects customer value and whether you would use multiple channels.',debrief:'Would you pay more for reliable distribution? How does service quality change the value created by a channel?'}];
-let user=null,role='student',room='',team='',round=1,config=null,teams={Red:null,Green:null},stopRoom=null,stopRed=null,stopGreen=null;
+let user=null,role='student',room='',team='',caseTeam='',round=1,config=null,teams={Red:null,Green:null},stopRoom=null,stopRed=null,stopGreen=null;
+const caseTeams=['Team 1','Team 2','Team 3','Team 4','Team 5'];
+const caseTeamRef=t=>doc(db,'eco7CandyClasses',room,'caseTeams',t);
 let draft={};let currentRoomToken=0;
 const teacher=()=>!!user&&!user.isAnonymous&&user.uid===INSTRUCTOR_UID;
 const roomRef=()=>doc(db,'eco7CandyClasses',room);
@@ -83,8 +94,35 @@ function calc(t){let e=entry(t),landed=e.landed;if(landed===undefined||landed===
 function renderTeacher(){if(round>2){$('responses').innerHTML=['Red','Green'].map(t=>`<div class="team ${t.toLowerCase()}"><h3><span class="dot"></span>${t}</h3><p>${esc(entry(t).discussion||'No response yet.')}</p></div>`).join('');return}const rows=['Red','Green'];$('teacherDecisions').innerHTML=rows.map(t=>{const e=entry(t);return `<p><b>${t}:</b> ${e.submitted?'Submitted':'Not submitted'} · ${esc(e.helpers??'—')} helpers ${round===2?'· '+esc(e.adUsed??'—')+' ADs at '+money(e.adRate??0)+'/candy':''} · Expected ${e.expected===undefined?'—':money(e.expected)}<br><span class="muted small">${esc(e.logic||'No rationale submitted.')}</span></p>`}).join('');$('resultForms').innerHTML=rows.map(t=>{const e=entry(t),s=calc(t);return `<div class="team ${t.toLowerCase()}"><h3><span class="dot"></span>${t} manufacturer</h3><label for="landed-${t}">Candies landed (0–15)</label><input id="landed-${t}" type="number" min="0" max="15" value="${esc(e.landed??'')}" placeholder="0–15"><details><summary>Adjust handoffs, if needed</summary><label for="helper-${t}">Total helper handoffs</label><input id="helper-${t}" type="number" min="0" value="${esc(e.helperHandoffs??(15*num(e.helpers)))}">${round===2?`<label for="ad-${t}">Candies handled by ADs</label><input id="ad-${t}" type="number" min="0" value="${esc(e.adHandlings??(e.adUsed>0?15:0))}">`:''}</details><button class="secondary" data-save-result="${t}">Save ${t} results</button><div class="outcome">${s?`Revenue ${money(s.revenue)} − fees ${money(s.fees)}<div class="money">Profit ${money(s.profit)}</div>`:'Awaiting results'}</div></div>`}).join('');document.querySelectorAll('[data-save-result]').forEach(b=>b.onclick=async()=>{const t=b.dataset.saveResult,e=entry(t),raw=$('landed-'+t).value;if(raw===''||!Number.isInteger(Number(raw))||Number(raw)<0||Number(raw)>15)return alertMsg('Enter a whole number between 0 and 15.');const helperHandoffs=num($('helper-'+t).value),adHandlings=round===2?num($('ad-'+t).value):0;try{await setDoc(teamRef(t),{rounds:{...teams[t]?.rounds,[String(round)]:{...e,landed:Number(raw),helperHandoffs,adHandlings}},updatedAt:serverTimestamp()},{merge:true});alertMsg(`${t} results saved.`,false)}catch(err){alertMsg('Save failed: '+err.message)}});$('scoreRows').innerHTML=rows.map(t=>{let e=entry(t),s=calc(t);return `<tr><td><b>${t}</b></td><td>${e.expected===undefined?'—':money(e.expected)}</td><td>${s?s.landed:'—'}</td><td>${s?money(s.revenue):'—'}</td><td>${s?money(s.fees):'—'}</td><td><b>${s?money(s.profit):'—'}</b></td></tr>`}).join('');const a=calc('Red'),b=calc('Green');$('winner').textContent=!a||!b?'Enter both teams’ results to compare profits.':Math.abs(a.profit-b.profit)<.000001?'Equal profit.':`${a.profit>b.profit?'Red':'Green'} earned the higher profit (${money(Math.max(a.profit,b.profit))}).`}
 $('studentTab').onclick=()=>setRole('student');$('instructorTab').onclick=()=>setRole('instructor');
 $('login').onclick=async()=>{try{await signInWithEmailAndPassword(auth,$('email').value,$('password').value);$('password').value='';if(!teacher())$('authStatus').textContent=`UID mismatch. Signed-in UID: ${auth.currentUser.uid}; expected instructor UID: ${INSTRUCTOR_UID}.`;else $('authStatus').textContent='Instructor verified.';}catch(e){$('authStatus').textContent=e.message}};
-$('logout').onclick=async()=>{cleanup();team='';await signOut(auth);setRole('student')};
-$('join').onclick=async()=>{if(!user||!user.isAnonymous)return alertMsg('Use an anonymous student session. Instructor must sign out first.');const code=$('studentRoom').value.trim().toUpperCase().replace(/[^A-Z0-9-]/g,'');if(!code)return alertMsg('Enter a class code.');team=$('teamPick').value;room=code;try{const s=await getDoc(roomRef());if(!s.exists())return alertMsg('Class not yet created by instructor.');const t=await getDoc(teamRef(team));if(t.exists()&&t.data().ownerUid!==user.uid){team='';return alertMsg('This team is already claimed on another device. Use the original team device or ask the instructor to reset ownership.')}if(!t.exists())await setDoc(teamRef(team),{ownerUid:user.uid,rounds:{},updatedAt:serverTimestamp()});await listenClass(code);$('joinStatus').textContent=`Joined ${team} in ${code}.`;setRole('student')}catch(e){alertMsg('Join failed: '+e.message)}};
+$('logout').onclick=async()=>{cleanup();team='';caseTeam='';await signOut(auth);setRole('student')};
+$('join').onclick=async()=>{
+ if(!user||!user.isAnonymous)return alertMsg('Use an anonymous student session. Instructor must sign out first.');
+ const code=$('studentRoom').value.trim().toUpperCase().replace(/[^A-Z0-9-]/g,'');
+ if(!code)return alertMsg('Enter a class code.');
+ const chosen=$('teamPick').value;
+ const joiningCase=caseTeams.includes(chosen);
+ room=code;
+ try{
+  const classSnap=await getDoc(roomRef());
+  if(!classSnap.exists())return alertMsg('Class not yet created by instructor.');
+  const seatRef=joiningCase?caseTeamRef(chosen):teamRef(chosen);
+  const seatSnap=await getDoc(seatRef);
+  if(seatSnap.exists()&&seatSnap.data().ownerUid!==user.uid)
+   return alertMsg('This group has already been claimed on another browser. Ask your instructor to reset team ownership if necessary.');
+  if(!seatSnap.exists()){
+   if(joiningCase)await setDoc(seatRef,{ownerUid:user.uid,joinedAt:serverTimestamp()});
+   else await setDoc(seatRef,{ownerUid:user.uid,rounds:{},updatedAt:serverTimestamp()});
+  }
+  team=joiningCase?'':chosen;
+  caseTeam=joiningCase?chosen:'';
+  if(joiningCase){
+   analysisView=classSnap.data().analysisUnlocked?.[0]?'1':classSnap.data().analysisUnlocked?.[1]?'2':'candy';
+  }else analysisView='candy';
+  await listenClass(code);
+  $('joinStatus').textContent=`Joined ${chosen} in ${code}.`;
+  setRole('student');
+ }catch(e){alertMsg('Join failed: '+e.message)}
+};
 $('openRoom').onclick=async()=>{if(!teacher())return;const code=$('teacherRoom').value.trim().toUpperCase().replace(/[^A-Z0-9-]/g,'');if(!code)return alertMsg('Enter class code.');await listenClass(code)};
 $('createRoom').onclick=async()=>{if(!teacher())return;const code=$('teacherRoom').value.trim().toUpperCase().replace(/[^A-Z0-9-]/g,'');if(!code)return alertMsg('Enter class code.');try{let ref=doc(db,'eco7CandyClasses',code),s=await getDoc(ref);if(s.exists())return alertMsg('Class exists. Select Open class.');await setDoc(ref,{unlocked:[true,false,false,false],locked:[false,false,false,false],createdAt:serverTimestamp()});await listenClass(code);alertMsg('Class created. Round 1 is visible.',false)}catch(e){alertMsg('Create class failed: '+e.message)}};
 $('toggleUnlock').onclick=async()=>{if(!teacher()||round===1)return;let unlocked=[...config.unlocked];unlocked[round-1]=!unlocked[round-1];try{await updateDoc(roomRef(),{unlocked})}catch(e){alertMsg('Cannot change visibility: '+e.message)}};
@@ -93,8 +131,9 @@ $('exportCsv').onclick=()=>{if(!teacher())return;let head=['round','team','helpe
 onAuthStateChanged(auth,async u=>{user=u;$('connection').textContent=u?(u.isAnonymous?'Student connected':'Signed in'):'Not signed in';$('identity').textContent=teacher()?'Instructor verified':u?.isAnonymous?'Anonymous student session':'';show('logout',!!u&&!u.isAnonymous);if(!u){try{await signInAnonymously(auth)}catch(e){alertMsg('Anonymous sign-in is unavailable: '+e.message)}return}if(teacher()){setRole('instructor');$('authStatus').textContent='Instructor signed in. Open or create a class.'}else if(role==='instructor'&&!u.isAnonymous){$('authStatus').textContent='This account is not authorized. Firebase UID: '+u.uid+'; expected '+INSTRUCTOR_UID} else setRole(role)});
 
 // ECO7 case analysis extension: independent Firestore docs; existing candy game remains unchanged.
-let analysisView='candy',reviewTeam='Red',solutionVisible=false;
-let analysisData={Red:null,Green:null},stopAnalysis=[];
+let analysisView='candy',reviewTeam='Team 1',solutionVisible=false;
+let analysisData=Object.fromEntries(caseTeams.map(t=>[t,null])),stopAnalysis=[];
+let caseDraft=Object.fromEntries(caseTeams.map(t=>[t,{}]));
 const analysisRDefs=[
   ['Conventional',3.25,.50,.125,1.20,7.109375],['Synthetic',7,.60,.125,1.95,12.25],
   ['Private label',4.75,.65,.15,null,null],['Eco7 full',6.75,.55,.125,2.01,13.2890625],
@@ -103,6 +142,107 @@ const analysisRDefs=[
 const money2=v=>v===null||!Number.isFinite(v)?'—':'$'+v.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});
 const decimal=v=>v===null||!Number.isFinite(v)?'—':Number(v.toFixed(4)).toLocaleString('en-CA',{maximumFractionDigits:4});
 const dollarRound=v=>v===null||!Number.isFinite(v)?'—':Math.round(v).toLocaleString('en-CA');
+// A constrained arithmetic parser for student calculation cells. Never evaluates JavaScript.
+function evaluateCell(value){
+ const original=String(value??'').trim();
+ if(!original)return null;
+ const input=original.startsWith('=')?original.slice(1):original;
+ const tokens=[];
+ const tokenPattern=/\s*(?:(\d+(?:\.\d*)?|\.\d+)([eE][+\-]?\d+)?|([()+\-*/^%]))/gy;
+ let pos=0;
+ while(pos<input.length){
+  tokenPattern.lastIndex=pos;
+  const m=tokenPattern.exec(input);
+  if(!m){if(input.slice(pos).trim()==='')break;throw new Error('Only numbers, arithmetic operators, and parentheses are supported');}
+  tokens.push(m[3]||Number(m[1]+(m[2]||'')));
+  pos=tokenPattern.lastIndex;
+  if(tokens.length>150)throw new Error('Expression is too long');
+ }
+ if(!tokens.length)throw new Error('Empty formula');
+ let p=0;
+ const peek=()=>tokens[p];
+ const take=()=>tokens[p++];
+ function primary(){
+  const t=take();
+  if(t==='('){const n=add();if(take()!==')')throw new Error('Missing closing parenthesis');return n;}
+  if(typeof t!=='number')throw new Error('Expected a number');
+  return t;
+ }
+ function power(){
+  let x=primary();
+  while(peek()==='%'){take();x/=100;}
+  if(peek()==='^'){take();x=Math.pow(x,unary());}
+  return x;
+ }
+ function unary(){
+  if(peek()==='+'){take();return unary();}
+  if(peek()==='-'){take();return -unary();}
+  return power();
+ }
+ function multiply(){
+  let x=unary();
+  while(peek()==='*'||peek()==='/'){
+   const op=take(),b=unary();
+   if(op==='/'&&b===0)throw new Error('Division by zero');
+   x=op==='*'?x*b:x/b;
+  }
+  return x;
+ }
+ function add(){
+  let x=multiply();
+  while(peek()==='+'||peek()==='-'){
+   const op=take(),b=multiply();x=op==='+'?x+b:x-b;
+  }
+  return x;
+ }
+ const result=add();
+ if(p!==tokens.length)throw new Error('Unexpected characters');
+ if(!Number.isFinite(result)||Math.abs(result)>1e15)throw new Error('Result is outside supported range');
+ return result;
+}
+function formattedCell(n,id){
+ if(n===null)return '';
+ // Display a sensible number of decimals for monetary/percentage work, without changing calculation precision.
+ const pct=/^m_avellinPct_/.test(id);
+ const digits=2;
+ return Number(n.toFixed(digits)).toLocaleString('en-CA',{maximumFractionDigits:digits});
+}
+function updateCellDisplay(input,focused=false){
+ const source=input.dataset.expression??input.value;
+ const note=input.nextElementSibling;
+ if(!source.trim()){
+  input.classList.remove('invalid','has-formula');
+  if(note?.classList.contains('calc-preview')){note.textContent='';note.classList.remove('invalid');}
+  if(!focused)input.value='';
+  return;
+ }
+ try{
+  const number=evaluateCell(source);
+  const output=formattedCell(number,input.dataset.analysis);
+  input.classList.remove('invalid');input.classList.add('has-formula');
+  if(note?.classList.contains('calc-preview')){note.textContent='= '+output;note.classList.remove('invalid');}
+  if(!focused)input.value=output;
+ }catch(e){
+  input.classList.add('invalid');input.classList.remove('has-formula');
+  if(note?.classList.contains('calc-preview')){note.textContent=e.message;note.classList.add('invalid');}
+  if(!focused)input.value=source;
+ }
+}
+function bindCalculationInputs(){
+ document.querySelectorAll('#analysisTable input[data-analysis]').forEach(input=>{
+  input.dataset.expression=input.value;
+  const note=document.createElement('span');note.className='calc-preview';input.insertAdjacentElement('afterend',note);
+  input.addEventListener('focus',()=>{input.value=input.dataset.expression;input.select();});
+  input.addEventListener('input',()=>{
+   input.dataset.expression=input.value;
+   caseDraft[role==='instructor'?reviewTeam:caseTeam][input.dataset.analysis]=input.value;
+   updateCellDisplay(input,true);
+  });
+  input.addEventListener('blur',()=>updateCellDisplay(input,false));
+  updateCellDisplay(input,false);
+ });
+}
+
 const marginsRows=[
  ['price','Retail price per quart','given'],['revenue','Revenue per 5-quart change','given'],
  ['outletMargin','DIFM outlet gross margin','given'],['outletGP','DIFM outlet gross profit','edit'],
@@ -125,46 +265,51 @@ let incR=revE-revBase,incG=gpE-gpBase;
 return {adoption:s.adoption,stores:[av+other,ind,aa],annual:[s.upgrades[0]*12,s.upgrades[1]*12,s.upgrades[2]*12],upgrades:u,rev:[incR*u[0],incR*u[1],incR*u[2]],gp:[incG*u[0],incG*u[1],(incG+.75)*u[2]],incR,incG,revE,gpE};}
 const scenarioRows=[['penetration','Adoption / penetration','given'],['stores','Stores carrying Eco7','edit'],['annual','Upgrades per store per year','edit'],['upgrades','Total annual Eco7 upgrades','edit'],['incR','Incremental Avellin revenue per change','given'],['incG','Incremental Avellin gross profit per change','given'],['rev','Annual incremental revenue','edit'],['gp','Annual incremental gross profit','edit']];
 function analysisRef(t){return doc(db,'eco7CandyClasses',room,'analysis',t)}
-function analysisValues(t){return analysisData[t]?.values||{}}
+function analysisValues(t){return {...(analysisData[t]?.values||{}),...(caseDraft[t]||{})}}
 function showAnalysisHub(){
-  const isInst=role==='instructor'&&teacher();
-  // Instructor activity navigation is independent of the Candy Game view.
-  // It remains visible before/after opening a class so it cannot disappear when
-  // the legacy game renderer resets its own panels.
-  const active=isInst || (!!config && !!team && role==='student');
-  show('analysisHub',active);
-  if(!active){show('analysisPanel',false);show('dataManager',false);return;}
-  const allowed=i=>isInst || config?.analysisUnlocked?.[i-1]===true;
-  if(analysisView==='reset'&&!isInst)analysisView='candy';
-  if((analysisView==='1'||analysisView==='2')&&!allowed(+analysisView))analysisView='candy';
-  for(let i=1;i<=2;i++){
-    const b=$(i===1?'navMargins':'navScenarios');
-    b.classList.toggle('hidden',!allowed(i));
-    b.classList.toggle('active',analysisView===String(i));
-  }
-  show('navReset',isInst);
-  $('navReset').classList.toggle('active',analysisView==='reset');
-  $('navCandy').classList.toggle('active',analysisView==='candy');
-  const ready=Boolean(config);
-  show('dataManager',analysisView==='reset'&&isInst);
-  show('analysisPanel',ready && (analysisView==='1'||analysisView==='2'));
-  // Leave the instructor's Create/Open class card available when no class exists.
-  show('studio',analysisView==='candy' && (isInst || (!!team && ready)));
-  if(ready && (analysisView==='1'||analysisView==='2'))renderAnalysis();
+ const isInst=role==='instructor'&&teacher();
+ const active=isInst || (!!config && (!!team||!!caseTeam) && role==='student');
+ show('analysisHub',active);
+ if(!active){show('analysisPanel',false);show('dataManager',false);show('casePending',false);return;}
+ const allowed=i=>isInst || (!!caseTeam&&config?.analysisUnlocked?.[i-1]===true);
+ if(analysisView==='reset'&&!isInst)analysisView='candy';
+ if((analysisView==='1'||analysisView==='2')&&!allowed(+analysisView))analysisView='candy';
+ if(!!caseTeam&&!isInst&&analysisView==='candy'){
+  if(allowed(1))analysisView='1';else if(allowed(2))analysisView='2';
+ }
+ for(let i=1;i<=2;i++){
+  const b=$(i===1?'navMargins':'navScenarios');
+  b.classList.toggle('hidden',!allowed(i));
+  b.classList.toggle('active',analysisView===String(i));
+ }
+ show('navReset',isInst);
+ show('navCandy',isInst||!!team);
+ $('navReset').classList.toggle('active',analysisView==='reset');
+ $('navCandy').classList.toggle('active',analysisView==='candy');
+ const ready=Boolean(config);
+ show('dataManager',analysisView==='reset'&&isInst);
+ show('analysisPanel',ready && (analysisView==='1'||analysisView==='2'));
+ show('casePending',ready && !isInst && !!caseTeam && analysisView==='candy');
+ show('studio',analysisView==='candy' && (isInst || (!!team && ready)));
+ if(ready && (analysisView==='1'||analysisView==='2'))renderAnalysis();
 }
 function readUserValue(key){const t=role==='instructor'?reviewTeam:team;return analysisValues(t)[key]}
-function renderAnalysis(){if(analysisView==='candy'||!config)return;const i=+analysisView,inst=role==='instructor'&&teacher(),v=analysisValues(inst?reviewTeam:team);
+function renderAnalysis(){if(analysisView==='candy'||!config)return;const i=+analysisView,inst=role==='instructor'&&teacher(),v=analysisValues(inst?reviewTeam:caseTeam);
 $('analysisPill').textContent='CASE ACTIVITY '+i;$('analysisTitle').textContent=i===1?'Who earns the margin?':'Which Eco7 launch creates the most incremental value?';
 $('analysisIntro').textContent=i===1?'Complete the missing channel economics per five-quart oil change. Green cells are given in Exhibit 5; blue cells are for your calculations.':'Use Exhibits 5 and 6 to calculate annual upgrades, incremental revenue and incremental gross profit under three alternative Eco7 launch strategies.';
 show('analysisTeacherControls',inst);show('analysisExport',inst);$('analysisUnlock').textContent=config.analysisUnlocked?.[i-1]?'Hide from students':'Unlock for students';$('analysisSolutions').textContent=solutionVisible?'Hide instructor answer key':'Show instructor answer key';$('analysisSave').textContent=inst?'Save corrected calculations':'Submit calculations';
 $('analysisStudentPrompt').textContent=i===1?'For each product, work backward from the retail price and channel margins. Express the final Avellin margin as a percentage (e.g., 24.37), not a decimal. Private-label manufacturer economics are not provided.':'Calculate results for each distribution scenario. Use full precision during calculations; enter dollars as whole numbers or decimals. For AvellinAuto, the solution assumes an additional $0.75 gross profit per Eco7 oil change.';
-if(i===1){let head='<tr><th>Per 5-quart oil change</th>'+analysisRDefs.map(r=>'<th>'+esc(r[0])+'</th>').join('')+'</tr>';let body=marginsRows.map(([key,label,type])=>'<tr><td>'+label+'</td>'+analysisRDefs.map((_,c)=>{let ans=marginAnswer(c),id='m_'+key+'_'+c,x=ans[key];if(x===null)return '<td class="given">N/A</td>';if(type==='given')return '<td class="given">'+(key.toLowerCase().includes('margin')?decimal(x*100)+'%':money2(x))+'</td>';let val=v[id]??'';return '<td class="calc"><input data-analysis="'+id+'" aria-label="'+esc(label+' '+analysisRDefs[c][0])+'" inputmode="decimal" placeholder="Calculate" value="'+esc(val)+'" />'+(inst&&solutionVisible?'<div class="small muted">Key: '+(key==='avellinPct'?decimal(x*100)+'%':money2(x))+'</div>':'')+'</td>'}).join('')+'</tr>').join('');$('analysisTable').innerHTML='<table class="analysis-table"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
+if(i===1){let head='<tr><th>Per 5-quart oil change</th>'+analysisRDefs.map(r=>'<th>'+esc(r[0])+'</th>').join('')+'</tr>';let body=marginsRows.map(([key,label,type])=>'<tr><td>'+label+'</td>'+analysisRDefs.map((_,c)=>{let ans=marginAnswer(c),id='m_'+key+'_'+c,x=ans[key];if(x===null)return '<td class="given">N/A</td>';if(type==='given')return '<td class="given">'+(key.toLowerCase().includes('margin')?decimal(x*100)+'%':money2(x))+'</td>';let val=v[id]??'';return '<td class="calc"><input data-analysis="'+id+'" aria-label="'+esc(label+' '+analysisRDefs[c][0])+'" inputmode="text" placeholder="Calculate" value="'+esc(val)+'" />'+(inst&&solutionVisible?'<div class="small muted">Key: '+(key==='avellinPct'?decimal(x*100)+'%':money2(x))+'</div>':'')+'</td>'}).join('')+'</tr>').join('');$('analysisTable').innerHTML='<table class="analysis-table"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
 }else{let html='';for(let j=0;j<3;j++){let m=scenarioModel(j),s=scenarios[j],col=['Fast lube','Other independents','AvellinAuto'];html+='<h3 style="margin:19px 0 8px">Scenario '+(j+1)+' · '+esc(scenarios[j].name)+'</h3><div class="small muted" style="margin:0 0 10px">Given: 4,400 Aventage fast-lube stores, 1,600 other fast-lube stores, 6,500 other independents and 436 AvellinAuto stores. Adoption: Aventage '+decimal(s.adoption[0]*100)+'%, other fast lube '+decimal(s.adoption[1]*100)+'%, other independents '+decimal(s.adoption[2]*100)+'%, AvellinAuto 100%. Monthly Eco7 upgrades: fast lube '+decimal(s.upgrades[0])+', other independents '+decimal(s.upgrades[1])+', AvellinAuto '+decimal(s.upgrades[2])+'.</div><table class="analysis-table"><thead><tr><th>Annual figures unless noted</th>'+col.map(x=>'<th>'+x+'</th>').join('')+'<th>Total</th></tr></thead><tbody>';
-for(let [key,label,type] of scenarioRows){html+='<tr><td>'+label+'</td>';for(let c=0;c<3;c++){let id='p_'+j+'_'+key+'_'+c,answer=key==='penetration'?m.adoption[c]:key==='incR'?m.incR:key==='incG'?m.incG:m[key][c];if(type==='given'){html+='<td class="given">'+(key==='penetration'?decimal(answer*100)+'%':money2(answer))+'</td>';}else{html+='<td class="calc"><input data-analysis="'+id+'" inputmode="decimal" aria-label="'+esc(scenarios[j].name+' '+label+' '+col[c])+'" value="'+esc(v[id]??'')+'" placeholder="Calculate"/>'+(inst&&solutionVisible?'<div class="small muted">Key: '+dollarRound(answer)+'</div>':'')+'</td>';}}if(key==='rev'||key==='gp'){let answer=m[key].reduce((a,b)=>a+b,0),id='p_'+j+'_'+key+'_total';html+='<td class="calc"><input data-analysis="'+id+'" inputmode="decimal" value="'+esc(v[id]??'')+'" placeholder="Total" />'+(inst&&solutionVisible?'<div class="small muted">Key: '+dollarRound(answer)+'</div>':'')+'</td>';}else html+='<td class="given">—</td>';html+='</tr>';}html+='</tbody></table>';} $('analysisTable').innerHTML=html;}
-$('analysisSaved').textContent=analysisData[inst?reviewTeam:team]?.updatedAt?'Previously submitted':'Not yet submitted';}
-let origCleanup=cleanup;cleanup=function(){stopAnalysis.forEach(f=>f());stopAnalysis=[];analysisData={Red:null,Green:null};origCleanup()};
+for(let [key,label,type] of scenarioRows){html+='<tr><td>'+label+'</td>';for(let c=0;c<3;c++){let id='p_'+j+'_'+key+'_'+c,answer=key==='penetration'?m.adoption[c]:key==='incR'?m.incR:key==='incG'?m.incG:m[key][c];if(type==='given'){html+='<td class="given">'+(key==='penetration'?decimal(answer*100)+'%':money2(answer))+'</td>';}else{html+='<td class="calc"><input data-analysis="'+id+'" inputmode="text" aria-label="'+esc(scenarios[j].name+' '+label+' '+col[c])+'" value="'+esc(v[id]??'')+'" placeholder="Calculate"/>'+(inst&&solutionVisible?'<div class="small muted">Key: '+dollarRound(answer)+'</div>':'')+'</td>';}}if(key==='rev'||key==='gp'){let answer=m[key].reduce((a,b)=>a+b,0),id='p_'+j+'_'+key+'_total';html+='<td class="calc"><input data-analysis="'+id+'" inputmode="text" value="'+esc(v[id]??'')+'" placeholder="Total" />'+(inst&&solutionVisible?'<div class="small muted">Key: '+dollarRound(answer)+'</div>':'')+'</td>';}else html+='<td class="given">—</td>';html+='</tr>';}html+='</tbody></table>';} $('analysisTable').innerHTML=html;}
+const currentTeam=inst?reviewTeam:caseTeam;
+const filled=t=>Object.entries(analysisData[t]?.values||{}).filter(([k,v])=>k.startsWith(i===1?'m_':'p_')&&String(v).trim()!=='').length;
+$('analysisSaved').textContent=currentTeam+' · '+(filled(currentTeam)?'Submitted ('+filled(currentTeam)+' cells)':'Not yet submitted');
+if(inst)$('analysisTeamStatus').innerHTML=caseTeams.map(t=>'<span class="'+(filled(t)?'done':'')+'">'+t+': '+(filled(t)?filled(t)+' cells':'No submission')+'</span>').join('');
+bindCalculationInputs();}
+let origCleanup=cleanup;cleanup=function(){stopAnalysis.forEach(f=>f());stopAnalysis=[];analysisData=Object.fromEntries(caseTeams.map(t=>[t,null]));origCleanup()};
 let origRender=render;render=function(){origRender();showAnalysisHub()};let origSetRole=setRole;setRole=function(v){origSetRole(v);showAnalysisHub()};let origListen=listenClass;
-listenClass=async function(code){stopAnalysis.forEach(f=>f());stopAnalysis=[];analysisData={Red:null,Green:null};await origListen(code);let names=teacher()?['Red','Green']:[team];for(let t of names){if(!t)continue;stopAnalysis.push(onSnapshot(analysisRef(t),snap=>{analysisData[t]=snap.exists()?snap.data():null;if(analysisView!=='candy')renderAnalysis()},err=>{console.warn('Case analysis sync',err.message)}));}showAnalysisHub()};
+listenClass=async function(code){stopAnalysis.forEach(f=>f());stopAnalysis=[];analysisData=Object.fromEntries(caseTeams.map(t=>[t,null]));await origListen(code);let names=teacher()?caseTeams:[caseTeam];for(let t of names){if(!t)continue;stopAnalysis.push(onSnapshot(analysisRef(t),snap=>{analysisData[t]=snap.exists()?snap.data():null;if(analysisView==='1'||analysisView==='2')renderAnalysis()},err=>{console.warn('Case analysis sync',err.message);if(t===caseTeam)alertMsg('Case worksheet connection failed: '+err.message)}));}showAnalysisHub()};
 function openAnalysisView(next){
   if(next==='reset' && !teacher())return;
   analysisView=next;
@@ -185,8 +330,39 @@ $('navReset').onclick=()=>openAnalysisView('reset');
 $('analysisTeam').onchange=()=>{reviewTeam=$('analysisTeam').value;renderAnalysis()};
 $('analysisSolutions').onclick=()=>{solutionVisible=!solutionVisible;renderAnalysis()};
 $('analysisUnlock').onclick=async()=>{if(!teacher())return;let arr=[...(config.analysisUnlocked||[false,false])];arr[+analysisView-1]=!arr[+analysisView-1];try{await updateDoc(roomRef(),{analysisUnlocked:arr})}catch(e){alertMsg('Unlock failed: '+e.message)}};
-$('analysisSave').onclick=async()=>{let t=teacher()?reviewTeam:team;if(!t||!room||!config)return;let values={...analysisValues(t)};for(let el of document.querySelectorAll('[data-analysis]')){let raw=el.value.trim();if(raw!==''&&!Number.isFinite(Number(raw)))return alertMsg('Enter numeric answers only. Check: '+el.getAttribute('aria-label'));values[el.dataset.analysis]=raw;}try{await setDoc(analysisRef(t),{ownerUid:teacher()?(teams[t]?.ownerUid||user.uid):user.uid,values,updatedAt:serverTimestamp()},{merge:true});$('analysisFeedback').textContent='Calculations saved.';alertMsg('Case analysis saved.',false)}catch(e){alertMsg('Save failed: '+e.message)}};
-$('analysisExport').onclick=()=>{let rows=[['team','cell','value']];for(let t of ['Red','Green'])for(let [k,v] of Object.entries(analysisValues(t)))rows.push([t,k,v]);let csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='eco7-case-analysis-'+room+'.csv';a.click();};
+$('analysisSave').onclick=async()=>{
+ const t=teacher()?reviewTeam:caseTeam;
+ if(!t||!room||!config)return alertMsg('Join a case team or open the class first.');
+ if(!teacher()&&!config.analysisUnlocked?.[Number(analysisView)-1])return alertMsg('The instructor has not released this case activity.');
+ let seat=null;
+ try{
+  const seatSnap=await getDoc(caseTeamRef(t));seat=seatSnap.exists()?seatSnap.data():null;
+  if(!seat)return alertMsg('The selected case team has not joined yet. Ask them to join before saving.');
+  if(!teacher()&&seat.ownerUid!==user.uid)return alertMsg('This case team belongs to another browser.');
+ }catch(e){return alertMsg('Could not verify case group: '+e.message)}
+ let values={...analysisValues(t)};
+ for(const el of document.querySelectorAll('#analysisTable [data-analysis]')){
+  const raw=(el.dataset.expression??el.value).trim();
+  try{if(raw)evaluateCell(raw)}catch(e){el.focus();return alertMsg('Fix '+(el.getAttribute('aria-label')||'the highlighted cell')+': '+e.message)}
+  values[el.dataset.analysis]=raw;
+ }
+ try{
+  await setDoc(analysisRef(t),{ownerUid:seat.ownerUid,values,updatedAt:serverTimestamp()},{merge:true});
+  caseDraft[t]={};
+  $('analysisFeedback').textContent='Calculations saved for '+t+'.';
+  alertMsg('Case analysis saved for '+t+'.',false);
+ }catch(e){alertMsg('Save failed: '+e.message)}
+};
+$('analysisExport').onclick=()=>{
+ let rows=[['team','cell','expression','calculated_value']];
+ for(let t of caseTeams)for(let [k,v] of Object.entries(analysisValues(t))){
+  let result='';try{if(String(v).trim())result=evaluateCell(v)}catch(e){result='ERROR'}
+  rows.push([t,k,v,result]);
+ }
+ let csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');
+ let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='eco7-case-analysis-'+room+'.csv';a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+};
 
 
 // Instructor-only Firebase reset controls. Existing Firestore rules already
@@ -204,8 +380,8 @@ async function runDataReset(kind){
  const prompts={
   round:`Clear both teams' Round ${selected} decisions and results in ${room}? Other rounds and case worksheets will be kept.`,
   candy:`Clear ALL four Candy Game rounds for ${room}? Team seats and case worksheets will be kept.`,
-  case:`Delete both teams' Channel Margins and Launch Scenarios answers for ${room}? The Candy Game will be kept.`,
-  all:`Start fresh in ${room}? This permanently deletes every team's game decisions, results, and case worksheets, and releases both team seats. The class code will remain.`
+  case:`Delete all five case teams' Channel Margins and Launch Scenarios answers for ${room}? Candy Game results and case team seats will be kept.`,
+  all:`Start fresh in ${room}? This permanently deletes Candy Game decisions/results and all five case teams' worksheets, and releases all seven team seats. The class code will remain.`
  };
  if(!window.confirm(prompts[kind]))return;
  if(kind==='all'){
@@ -231,16 +407,18 @@ async function runDataReset(kind){
     batch.update(roomRef(),{locked});
    } else batch.update(roomRef(),freshRelease());
   }else if(kind==='case'){
-   for(const t of ['Red','Green'])batch.delete(analysisRef(t));
+   for(const t of [...caseTeams,'Red','Green'])batch.delete(analysisRef(t));
    batch.update(roomRef(),{analysisUnlocked:[false,false]});
   }else if(kind==='all'){
    for(const t of ['Red','Green']){batch.delete(teamRef(t));batch.delete(analysisRef(t))}
+   for(const t of caseTeams){batch.delete(analysisRef(t));batch.delete(caseTeamRef(t));}
    batch.update(roomRef(),{...freshRelease(),analysisUnlocked:[false,false]});
   }
   await batch.commit();
-  if(kind==='all'){round=1;analysisView='candy';reviewTeam='Red';solutionVisible=false;draft={};}
+  if(kind==='all'){round=1;analysisView='candy';reviewTeam='Team 1';solutionVisible=false;draft={};caseDraft=Object.fromEntries(caseTeams.map(t=>[t,{}]));}
   if(kind==='candy'){round=1;draft={};}
-  resetNotice({round:`Round ${selected} cleared for Red and Green. Decisions are open again.`,candy:'Candy Game cleared. Round 1 is available; later rounds are hidden.',case:'Both case worksheets cleared and hidden from students.',all:'Class reset. All submissions and team assignments cleared. Round 1 is available.'}[kind]);
+  if(kind==='case'){caseDraft=Object.fromEntries(caseTeams.map(t=>[t,{}]));}
+  resetNotice({round:`Round ${selected} cleared for Red and Green. Decisions are open again.`,candy:'Candy Game cleared. Round 1 is available; later rounds are hidden.',case:'All five case teams’ worksheets cleared and hidden from students.',all:'Class reset. Candy Game and all five case teams cleared. Round 1 is available.'}[kind]);
   render();
  }catch(error){console.error('Firebase reset failed',error);resetNotice('Reset failed: '+error.message,false)}
  finally{button.disabled=false;button.textContent=oldText;}
@@ -253,13 +431,15 @@ $('backupClass').onclick=async()=>{
  if(!teacher()||!room||!config)return resetNotice('Open a class first.',false);
  const btn=$('backupClass');btn.disabled=true;
  try{
-  const refs=[roomRef(),teamRef('Red'),teamRef('Green'),analysisRef('Red'),analysisRef('Green')];
-  const [cl,r,g,ar,ag]=await Promise.all(refs.map(x=>getDoc(x)));
+  const refs=[roomRef(),...['Red','Green'].map(teamRef),...caseTeams.map(caseTeamRef),...caseTeams.map(analysisRef)];
+  const results=await Promise.all(refs.map(x=>getDoc(x)));
+  const val=i=>results[i].exists()?results[i].data():null;
+  const candyTeams=Object.fromEntries(['Red','Green'].map((t,j)=>[t,val(j+1)]));
+  const caseSeats=Object.fromEntries(caseTeams.map((t,j)=>[t,val(3+j)]));
+  const analyses=Object.fromEntries(caseTeams.map((t,j)=>[t,val(8+j)]));
   downloadsJson(`eco7-${room}-backup-${new Date().toISOString().slice(0,10)}.json`,{
    exportedAt:new Date().toISOString(),classCode:room,
-   classSettings:cl.exists()?cl.data():null,
-   teams:{Red:r.exists()?r.data():null,Green:g.exists()?g.data():null},
-   caseAnalysis:{Red:ar.exists()?ar.data():null,Green:ag.exists()?ag.data():null}
+   classSettings:val(0),candyTeams,caseSeats,caseAnalysis:analyses
   });
   resetNotice('Class backup downloaded.',true);
  }catch(error){resetNotice('Backup failed: '+error.message,false)}
