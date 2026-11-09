@@ -2,6 +2,17 @@
 :root{--ink:#173744;--navy:#123e52;--teal:#087e79;--muted:#647781;--bg:#f4f7f7;--line:#dbe5e7;--red:#b64249;--green:#22805d}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink)}header{background:var(--navy);color:white;padding:25px max(22px,calc((100% - 1060px)/2))}h1{font-size:29px;letter-spacing:-.5px;margin:0}h2{font-size:20px;margin:0 0 8px}h3{font-size:17px;margin:0 0 12px}p{margin:7px 0 13px}.sub{color:#c8e1e5}.wrap{max-width:1060px;margin:20px auto;padding:0 18px 60px}.notice{border:1px solid #e9d7a6;border-radius:9px;background:#fff9e9;padding:11px 14px;font-size:13px;margin:14px 0}.roundtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.roundtabs button{background:white;color:var(--navy);border:1px solid var(--line);padding:13px 8px;border-radius:10px;text-align:center;cursor:pointer;font-size:14px;font-weight:700}.roundtabs button.active{background:var(--teal);color:white;border-color:var(--teal)}.roundtabs small{display:block;font-weight:400;opacity:.85;font-size:11px}.panel{border:1px solid var(--line);border-radius:12px;padding:20px;background:white;margin:14px 0;box-shadow:0 2px 8px #153d4a08}.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.pill{background:#e9f4f2;border-radius:30px;padding:5px 12px;font-size:12px;color:#17665c;font-weight:700}.muted{color:var(--muted)}.small{font-size:12px}.teamgrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.team{border:1px solid var(--line);border-radius:11px;padding:17px}.team.red{border-top:5px solid var(--red)}.team.green{border-top:5px solid var(--green)}.team h3{display:flex;align-items:center;gap:8px}.dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--red)}.green .dot{background:var(--green)}label{display:block;font-weight:650;font-size:13px;margin:11px 0 5px}input,textarea{width:100%;border:1px solid #b6c7cc;border-radius:7px;padding:9px 10px;font:inherit;color:var(--ink);background:#fff}textarea{resize:vertical;min-height:80px}input[type=number]{max-width:200px}button{font:inherit;cursor:pointer;border:0;border-radius:8px;padding:10px 15px;font-weight:650;background:var(--teal);color:white}button.secondary{background:#e8f0f1;color:var(--navy)}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #81c9c6;outline-offset:2px}.outcome{background:#eff5f5;padding:12px;border-radius:9px;margin-top:13px}.money{font-size:25px;font-weight:800}.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.stat{background:#eff5f5;padding:12px;border-radius:10px}.stat .money{font-size:22px}.hidden{display:none!important}.viewtabs{display:inline-flex;gap:5px;background:#e8f0f1;padding:4px;border-radius:10px}.viewtabs button{background:transparent;color:var(--navy);padding:8px 13px}.viewtabs button.active{background:var(--navy);color:white}details{border:1px solid var(--line);border-radius:8px;padding:10px;margin-top:12px}summary{cursor:pointer;font-weight:700}.info{background:#e9f4f2;border-radius:9px;padding:12px 15px}.admin{border-left:4px solid var(--teal)}table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:10px;border-bottom:1px solid var(--line);text-align:left}th{background:#eff5f5}.scroller{overflow-x:auto}.selection{display:flex;gap:8px;flex-wrap:wrap}.selection button{background:#e8f0f1;color:var(--navy)}.selection button.active{background:var(--teal);color:white}.foot{font-size:12px;color:var(--muted);margin-top:14px}@media(max-width:720px){.teamgrid{grid-template-columns:1fr}.roundtabs{grid-template-columns:repeat(2,1fr)}header{padding:20px}h1{font-size:25px}.panel{padding:15px}}
 </style><style>.status{color:#ffeab8;font-size:12px}.login{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.login label{margin:0}.login input{max-width:270px}.error{color:#a82d36}.success{color:#14734e}.roundtabs button:disabled{opacity:.55;cursor:not-allowed}.teamgrid.single{grid-template-columns:1fr}.topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.topbar input{max-width:230px}.notice{overflow-wrap:anywhere}.controls{display:flex;gap:8px;flex-wrap:wrap}.roundtabs .hidden{display:none}.tag{font-size:12px;color:var(--muted)}@media(max-width:720px){.login input{max-width:100%}}</style><style>
 .analysis-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 20px;scroll-margin-top:16px}.analysis-tabs button{background:#e6efef;color:#123e52}.analysis-tabs button.active{background:#087e79;color:white}.analysis-grid{overflow:auto;max-width:100%}.analysis-table{min-width:810px;font-size:12px}.analysis-table th:first-child,.analysis-table td:first-child{min-width:235px;position:sticky;left:0;background:#fff;z-index:1}.analysis-table th:first-child{background:#eff5f5}.analysis-table td,.analysis-table th{padding:7px 9px;border:1px solid #e1e9eb}.analysis-table input{width:100%;min-width:84px;max-width:120px;padding:6px;font-size:12px;background:#f1f8ff;border-color:#aac9e5}.analysis-table .given{background:#eef4f1;color:#46616a}.analysis-table .calc{background:#f2f8fc}.analysis-table .gap td{background:#edf3f4;font-weight:750}.analysis-table .result td{font-weight:750;background:#e7f4f0}.analysis-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.analysis-note{border-left:4px solid #538c94;padding:10px 12px;background:#f1f8f8;margin:12px 0}.analysis-summary{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:10px}.analysis-summary>div{background:#eef5f5;padding:12px;border-radius:9px}.analysis-table .grade-good{background:#e4f5e9}.analysis-table .grade-bad{background:#fff3e4}@media(max-width:680px){.analysis-summary{grid-template-columns:1fr}}
+
+/* Instructor-only data management */
+.reset-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
+.reset-option{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fcfdfd}
+.reset-option h3{font-size:15px;margin:0 0 7px}.reset-option p{margin-bottom:12px}
+.reset-option select{border:1px solid #b6c7cc;border-radius:7px;padding:8px;background:white;color:var(--ink)}
+.reset-warning{border-color:#e9b3af;background:#fffafa}
+button.danger{background:#a43239;color:white}
+#dataManager summary{font-size:16px}
+#resetFeedback{min-height:0;margin:12px 0 0}
+@media(max-width:720px){.reset-grid{grid-template-columns:1fr}}
 </style></head><body>
 <header><div class="row"><div><h1>Get Me My Candy</h1><div class="sub">BUS 702 · Eco7 · Distribution Game Studio</div></div><span class="status" id="connection">Connecting to Firebase…</span></div></header>
 <main class="wrap">
@@ -10,6 +21,18 @@
 <div id="teacherLogin" class="hidden"><div class="login"><div><label for="email">Instructor email</label><input id="email" type="email"></div><div><label for="password">Password</label><input id="password" type="password"></div><button id="login">Sign in</button><button id="logout" class="secondary hidden">Sign out</button></div><p class="small muted" id="authStatus"></p></div></section>
 <section id="analysisHub" class="hidden">
 <div class="analysis-tabs" id="analysisNav" role="navigation" aria-label="Studio activities"><button type="button" id="navCandy" class="active">Candy game</button><button type="button" id="navMargins">Case activity 1 · Channel margins</button><button type="button" id="navScenarios">Case activity 2 · Launch scenarios</button></div>
+<section class="panel admin hidden" id="dataManager">
+<details id="dataManagerDetails">
+<summary>Manage class data <span class="tag">(instructor only)</span></summary>
+<p class="small muted">Clear practice submissions without deleting the Studio or changing its class code. Resets affect the shared Firebase database immediately. Export a backup first if you may need the previous answers.</p>
+<div class="controls" style="margin:12px 0 16px"><button type="button" id="backupClass" class="secondary">Download class backup</button></div>
+<div class="reset-grid">
+<div class="reset-option"><h3>Reset one candy round</h3><p class="small muted">Remove Red and Green decisions and results for only the chosen round. Reopens that round for submissions.</p><div class="controls"><select id="resetRoundPick" aria-label="Round to reset"><option value="1">Round 1</option><option value="2">Round 2</option><option value="3">Round 3</option><option value="4">Round 4</option></select><button type="button" class="secondary" id="resetOneRound">Reset round</button></div></div>
+<div class="reset-option"><h3>Reset candy game</h3><p class="small muted">Clear decisions and scores for all four rounds and restore initial round visibility. Team memberships and case worksheets stay.</p><button type="button" class="secondary" id="resetCandy">Clear candy game</button></div>
+<div class="reset-option"><h3>Reset case worksheets</h3><p class="small muted">Delete both teams' margin and launch-scenario calculations, then hide both case activities from students.</p><button type="button" class="secondary" id="resetCase">Clear case worksheets</button></div>
+<div class="reset-option reset-warning"><h3>Start a fresh class</h3><p class="small muted">Delete all game and case submissions, release Red and Green team ownership, and hide all rounds except Round 1. The class code stays the same. Use this for a new cohort.</p><button type="button" id="resetAllClass" class="danger">Clear everything and release teams</button></div>
+</div><p class="small" id="resetFeedback" role="status"></p>
+</details></section>
 <section class="panel hidden" id="analysisPanel">
 <div class="row"><div><span class="pill" id="analysisPill"></span><h2 id="analysisTitle" style="margin-top:9px"></h2></div><span id="analysisSaved" class="small muted"></span></div>
 <p id="analysisIntro"></p><div id="analysisTeacherControls" class="hidden analysis-note"><div class="row"><div><b>Instructor release controls</b><p class="small muted">Students cannot see this activity until you unlock it.</p></div><button id="analysisUnlock"></button></div><div class="analysis-toolbar"><label for="analysisTeam">Review team</label><select id="analysisTeam" style="padding:8px;border:1px solid #aec0c6;border-radius:6px"><option>Red</option><option>Green</option></select><button id="analysisSolutions" class="secondary">Show instructor answer key</button></div></div>
@@ -27,7 +50,7 @@
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
 import {getAuth, onAuthStateChanged, signInAnonymously, signInWithEmailAndPassword, signOut} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
-import {getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, getDocs} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+import {getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, collection, getDocs, writeBatch} from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
 const app=initializeApp({apiKey:'AIzaSyDrwdt2ANhJdO_jLPIVJnUFQy3YqORKOXk',authDomain:'eco7studio.firebaseapp.com',projectId:'eco7studio',storageBucket:'eco7studio.firebasestorage.app',messagingSenderId:'795612532236',appId:'1:795612532236:web:a7fc826339d95569d3e829'});
 const auth=getAuth(app),db=getFirestore(app);
 const INSTRUCTOR_UID='ZR1THVjVu0Vlm2gGsGCuSFyt2o52';
@@ -99,8 +122,8 @@ return {adoption:s.adoption,stores:[av+other,ind,aa],annual:[s.upgrades[0]*12,s.
 const scenarioRows=[['penetration','Adoption / penetration','given'],['stores','Stores carrying Eco7','edit'],['annual','Upgrades per store per year','edit'],['upgrades','Total annual Eco7 upgrades','edit'],['incR','Incremental Avellin revenue per change','given'],['incG','Incremental Avellin gross profit per change','given'],['rev','Annual incremental revenue','edit'],['gp','Annual incremental gross profit','edit']];
 function analysisRef(t){return doc(db,'eco7CandyClasses',room,'analysis',t)}
 function analysisValues(t){return analysisData[t]?.values||{}}
-function showAnalysisHub(){let active=!!config&&(role==='instructor'?teacher():!!team);show('analysisHub',active);if(!active)return;const isInst=role==='instructor'&&teacher();const allowed=i=>isInst||config.analysisUnlocked?.[i-1]===true;
-$('navCandy').classList.toggle('active',analysisView==='candy');for(let i=1;i<=2;i++){let b=$(i===1?'navMargins':'navScenarios');show(b,allowed(i));b.classList.toggle('active',analysisView===String(i));}
+function showAnalysisHub(){let active=!!config&&(role==='instructor'?teacher():!!team);show('analysisHub',active);if(!active)return;const isInst=role==='instructor'&&teacher();show('dataManager',isInst);const allowed=i=>isInst||config.analysisUnlocked?.[i-1]===true;
+$('navCandy').classList.toggle('active',analysisView==='candy');for(let i=1;i<=2;i++){let b=$(i===1?'navMargins':'navScenarios');b.classList.toggle('hidden',!allowed(i));b.classList.toggle('active',analysisView===String(i));}
 if(analysisView!=='candy'&&!allowed(+analysisView))analysisView='candy';show('studio',analysisView==='candy');show('analysisPanel',analysisView!=='candy');$('navCandy').classList.toggle('active',analysisView==='candy');if(analysisView!=='candy')renderAnalysis();}
 function readUserValue(key){const t=role==='instructor'?reviewTeam:team;return analysisValues(t)[key]}
 function renderAnalysis(){if(analysisView==='candy'||!config)return;const i=+analysisView,inst=role==='instructor'&&teacher(),v=analysisValues(inst?reviewTeam:team);
@@ -134,4 +157,81 @@ $('analysisUnlock').onclick=async()=>{if(!teacher())return;let arr=[...(config.a
 $('analysisSave').onclick=async()=>{let t=teacher()?reviewTeam:team;if(!t||!room||!config)return;let values={...analysisValues(t)};for(let el of document.querySelectorAll('[data-analysis]')){let raw=el.value.trim();if(raw!==''&&!Number.isFinite(Number(raw)))return alertMsg('Enter numeric answers only. Check: '+el.getAttribute('aria-label'));values[el.dataset.analysis]=raw;}try{await setDoc(analysisRef(t),{ownerUid:teacher()?(teams[t]?.ownerUid||user.uid):user.uid,values,updatedAt:serverTimestamp()},{merge:true});$('analysisFeedback').textContent='Calculations saved.';alertMsg('Case analysis saved.',false)}catch(e){alertMsg('Save failed: '+e.message)}};
 $('analysisExport').onclick=()=>{let rows=[['team','cell','value']];for(let t of ['Red','Green'])for(let [k,v] of Object.entries(analysisValues(t)))rows.push([t,k,v]);let csv=rows.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='eco7-case-analysis-'+room+'.csv';a.click();};
 
+
+// Instructor-only Firebase reset controls. Existing Firestore rules already
+// authorize the instructor to edit class state and delete/update team or analysis docs.
+const freshRelease=()=>({unlocked:[true,false,false,false],locked:[false,false,false,false]});
+const resetNotice=(message,ok=true)=>{ $('resetFeedback').textContent=message; $('resetFeedback').style.color=ok?'#176b4a':'#ac3036'; alertMsg(message,!ok); };
+const downloadsJson=(filename,data)=>{
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+ const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000);
+};
+async function runDataReset(kind){
+ if(!teacher()||!room||!config){resetNotice('Open a class using your instructor account before resetting anything.',false);return;}
+ const selected=Number($('resetRoundPick').value);
+ const prompts={
+  round:`Clear both teams' Round ${selected} decisions and results in ${room}? Other rounds and case worksheets will be kept.`,
+  candy:`Clear ALL four Candy Game rounds for ${room}? Team seats and case worksheets will be kept.`,
+  case:`Delete both teams' Channel Margins and Launch Scenarios answers for ${room}? The Candy Game will be kept.`,
+  all:`Start fresh in ${room}? This permanently deletes every team's game decisions, results, and case worksheets, and releases both team seats. The class code will remain.`
+ };
+ if(!window.confirm(prompts[kind]))return;
+ if(kind==='all'){
+  const typed=window.prompt(`For confirmation, type the class code exactly: ${room}`);
+  if(typed!==room){resetNotice('Full reset cancelled. Class code was not confirmed.',false);return;}
+ }
+ const pressed={round:'resetOneRound',candy:'resetCandy',case:'resetCase',all:'resetAllClass'}[kind];
+ const button=$(pressed),oldText=button.textContent;button.disabled=true;button.textContent='Updating Firebase…';
+ try{
+  // Single atomic write batch: either every selected reset is saved or none is.
+  const batch=writeBatch(db);
+  if(kind==='round'||kind==='candy'){
+   const docs=await Promise.all(['Red','Green'].map(t=>getDoc(teamRef(t))));
+   ['Red','Green'].forEach((t,index)=>{
+    if(!docs[index].exists())return;
+    const oldRounds=docs[index].data().rounds||{};
+    const nextRounds=kind==='candy'?{}:{...oldRounds};
+    if(kind==='round')delete nextRounds[String(selected)];
+    batch.update(teamRef(t),{rounds:nextRounds,updatedAt:serverTimestamp()});
+   });
+   if(kind==='round'){
+    const locked=[...(config.locked||[false,false,false,false])];locked[selected-1]=false;
+    batch.update(roomRef(),{locked});
+   } else batch.update(roomRef(),freshRelease());
+  }else if(kind==='case'){
+   for(const t of ['Red','Green'])batch.delete(analysisRef(t));
+   batch.update(roomRef(),{analysisUnlocked:[false,false]});
+  }else if(kind==='all'){
+   for(const t of ['Red','Green']){batch.delete(teamRef(t));batch.delete(analysisRef(t))}
+   batch.update(roomRef(),{...freshRelease(),analysisUnlocked:[false,false]});
+  }
+  await batch.commit();
+  if(kind==='all'){round=1;analysisView='candy';reviewTeam='Red';solutionVisible=false;draft={};}
+  if(kind==='candy'){round=1;draft={};}
+  resetNotice({round:`Round ${selected} cleared for Red and Green. Decisions are open again.`,candy:'Candy Game cleared. Round 1 is available; later rounds are hidden.',case:'Both case worksheets cleared and hidden from students.',all:'Class reset. All submissions and team assignments cleared. Round 1 is available.'}[kind]);
+  render();
+ }catch(error){console.error('Firebase reset failed',error);resetNotice('Reset failed: '+error.message,false)}
+ finally{button.disabled=false;button.textContent=oldText;}
+}
+$('resetOneRound').onclick=()=>runDataReset('round');
+$('resetCandy').onclick=()=>runDataReset('candy');
+$('resetCase').onclick=()=>runDataReset('case');
+$('resetAllClass').onclick=()=>runDataReset('all');
+$('backupClass').onclick=async()=>{
+ if(!teacher()||!room||!config)return resetNotice('Open a class first.',false);
+ const btn=$('backupClass');btn.disabled=true;
+ try{
+  const refs=[roomRef(),teamRef('Red'),teamRef('Green'),analysisRef('Red'),analysisRef('Green')];
+  const [cl,r,g,ar,ag]=await Promise.all(refs.map(x=>getDoc(x)));
+  downloadsJson(`eco7-${room}-backup-${new Date().toISOString().slice(0,10)}.json`,{
+   exportedAt:new Date().toISOString(),classCode:room,
+   classSettings:cl.exists()?cl.data():null,
+   teams:{Red:r.exists()?r.data():null,Green:g.exists()?g.data():null},
+   caseAnalysis:{Red:ar.exists()?ar.data():null,Green:ag.exists()?ag.data():null}
+  });
+  resetNotice('Class backup downloaded.',true);
+ }catch(error){resetNotice('Backup failed: '+error.message,false)}
+ finally{btn.disabled=false;}
+};
 </script></body></html>
