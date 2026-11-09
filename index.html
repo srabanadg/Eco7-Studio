@@ -3,6 +3,10 @@
 </style><style>.status{color:#ffeab8;font-size:12px}.login{display:flex;gap:8px;align-items:end;flex-wrap:wrap}.login label{margin:0}.login input{max-width:270px}.error{color:#a82d36}.success{color:#14734e}.roundtabs button:disabled{opacity:.55;cursor:not-allowed}.teamgrid.single{grid-template-columns:1fr}.topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.topbar input{max-width:230px}.notice{overflow-wrap:anywhere}.controls{display:flex;gap:8px;flex-wrap:wrap}.roundtabs .hidden{display:none}.tag{font-size:12px;color:var(--muted)}@media(max-width:720px){.login input{max-width:100%}}</style><style>
 .analysis-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 20px;scroll-margin-top:16px}.analysis-tabs button{background:#e6efef;color:#123e52}.analysis-tabs button.active{background:#087e79;color:white}.analysis-grid{overflow:auto;max-width:100%}.analysis-table{min-width:810px;font-size:12px}.analysis-table th:first-child,.analysis-table td:first-child{min-width:235px;position:sticky;left:0;background:#fff;z-index:1}.analysis-table th:first-child{background:#eff5f5}.analysis-table td,.analysis-table th{padding:7px 9px;border:1px solid #e1e9eb}.analysis-table input{width:100%;min-width:84px;max-width:120px;padding:6px;font-size:12px;background:#f1f8ff;border-color:#aac9e5}.analysis-table .given{background:#eef4f1;color:#46616a}.analysis-table .calc{background:#f2f8fc}.analysis-table .gap td{background:#edf3f4;font-weight:750}.analysis-table .result td{font-weight:750;background:#e7f4f0}.analysis-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.analysis-note{border-left:4px solid #538c94;padding:10px 12px;background:#f1f8f8;margin:12px 0}.analysis-summary{display:grid;grid-template-columns:repeat(3,minmax(150px,1fr));gap:10px}.analysis-summary>div{background:#eef5f5;padding:12px;border-radius:9px}.analysis-table .grade-good{background:#e4f5e9}.analysis-table .grade-bad{background:#fff3e4}@media(max-width:680px){.analysis-summary{grid-template-columns:1fr}}
 
+/* Case activity and reset navigation */
+.analysis-tabs{padding:6px;border:1px solid var(--line);background:#fff;border-radius:12px;position:relative}
+.analysis-tabs button{flex:1 1 180px;min-height:43px}
+.analysis-tabs button:focus-visible{outline:3px solid #81c9c6}
 /* Instructor-only data management */
 .reset-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
 .reset-option{border:1px solid var(--line);border-radius:10px;padding:14px;background:#fcfdfd}
@@ -14,16 +18,16 @@ button.danger{background:#a43239;color:white}
 #resetFeedback{min-height:0;margin:12px 0 0}
 @media(max-width:720px){.reset-grid{grid-template-columns:1fr}}
 </style></head><body>
-<header><div class="row"><div><h1>Get Me My Candy</h1><div class="sub">BUS 702 · Eco7 · Distribution Game Studio</div></div><span class="status" id="connection">Connecting to Firebase…</span></div></header>
+<header><div class="row"><div><h1>Get Me My Candy</h1><div class="sub">BUS 702 · Eco7 · Distribution Game Studio <span style="font-size:11px;opacity:.8;white-space:nowrap">| v4: Activities + Reset</span></div></div><span class="status" id="connection">Connecting to Firebase…</span></div></header>
 <main class="wrap">
 <section class="panel" id="rolePanel"><div class="row"><div class="viewtabs"><button type="button" id="studentTab" class="active">Team view</button><button type="button" id="instructorTab">Instructor view</button></div><span class="tag" id="identity"></span></div>
 <div id="teamJoin"><p>Enter your class code and select your team. One browser per team submits decisions.</p><div class="topbar"><div><label for="studentRoom">Class code</label><input id="studentRoom" value="BUS702-ECO7" autocomplete="off"></div><div><label for="teamPick">Team</label><select id="teamPick" style="width:170px;padding:10px;border:1px solid #b6c7cc;border-radius:7px"><option value="Red">Red</option><option value="Green">Green</option></select></div><button id="join" type="button">Join team</button></div><p class="small muted" id="joinStatus"></p></div>
 <div id="teacherLogin" class="hidden"><div class="login"><div><label for="email">Instructor email</label><input id="email" type="email"></div><div><label for="password">Password</label><input id="password" type="password"></div><button id="login">Sign in</button><button id="logout" class="secondary hidden">Sign out</button></div><p class="small muted" id="authStatus"></p></div></section>
 <section id="analysisHub" class="hidden">
-<div class="analysis-tabs" id="analysisNav" role="navigation" aria-label="Studio activities"><button type="button" id="navCandy" class="active">Candy game</button><button type="button" id="navMargins">Case activity 1 · Channel margins</button><button type="button" id="navScenarios">Case activity 2 · Launch scenarios</button></div>
+<div class="analysis-tabs" id="analysisNav" role="navigation" aria-label="Studio activities"><button type="button" id="navCandy" class="active">Candy game</button><button type="button" id="navMargins">Case activity 1 · Channel margins</button><button type="button" id="navScenarios">Case activity 2 · Launch scenarios</button><button type="button" id="navReset">Reset data</button></div>
 <section class="panel admin hidden" id="dataManager">
-<details id="dataManagerDetails">
-<summary>Manage class data <span class="tag">(instructor only)</span></summary>
+<h2>Manage class data <span class="tag">(instructor only)</span></h2>
+<div id="dataManagerDetails">
 <p class="small muted">Clear practice submissions without deleting the Studio or changing its class code. Resets affect the shared Firebase database immediately. Export a backup first if you may need the previous answers.</p>
 <div class="controls" style="margin:12px 0 16px"><button type="button" id="backupClass" class="secondary">Download class backup</button></div>
 <div class="reset-grid">
@@ -32,7 +36,7 @@ button.danger{background:#a43239;color:white}
 <div class="reset-option"><h3>Reset case worksheets</h3><p class="small muted">Delete both teams' margin and launch-scenario calculations, then hide both case activities from students.</p><button type="button" class="secondary" id="resetCase">Clear case worksheets</button></div>
 <div class="reset-option reset-warning"><h3>Start a fresh class</h3><p class="small muted">Delete all game and case submissions, release Red and Green team ownership, and hide all rounds except Round 1. The class code stays the same. Use this for a new cohort.</p><button type="button" id="resetAllClass" class="danger">Clear everything and release teams</button></div>
 </div><p class="small" id="resetFeedback" role="status"></p>
-</details></section>
+</div></section>
 <section class="panel hidden" id="analysisPanel">
 <div class="row"><div><span class="pill" id="analysisPill"></span><h2 id="analysisTitle" style="margin-top:9px"></h2></div><span id="analysisSaved" class="small muted"></span></div>
 <p id="analysisIntro"></p><div id="analysisTeacherControls" class="hidden analysis-note"><div class="row"><div><b>Instructor release controls</b><p class="small muted">Students cannot see this activity until you unlock it.</p></div><button id="analysisUnlock"></button></div><div class="analysis-toolbar"><label for="analysisTeam">Review team</label><select id="analysisTeam" style="padding:8px;border:1px solid #aec0c6;border-radius:6px"><option>Red</option><option>Green</option></select><button id="analysisSolutions" class="secondary">Show instructor answer key</button></div></div>
@@ -122,9 +126,32 @@ return {adoption:s.adoption,stores:[av+other,ind,aa],annual:[s.upgrades[0]*12,s.
 const scenarioRows=[['penetration','Adoption / penetration','given'],['stores','Stores carrying Eco7','edit'],['annual','Upgrades per store per year','edit'],['upgrades','Total annual Eco7 upgrades','edit'],['incR','Incremental Avellin revenue per change','given'],['incG','Incremental Avellin gross profit per change','given'],['rev','Annual incremental revenue','edit'],['gp','Annual incremental gross profit','edit']];
 function analysisRef(t){return doc(db,'eco7CandyClasses',room,'analysis',t)}
 function analysisValues(t){return analysisData[t]?.values||{}}
-function showAnalysisHub(){let active=!!config&&(role==='instructor'?teacher():!!team);show('analysisHub',active);if(!active)return;const isInst=role==='instructor'&&teacher();show('dataManager',isInst);const allowed=i=>isInst||config.analysisUnlocked?.[i-1]===true;
-$('navCandy').classList.toggle('active',analysisView==='candy');for(let i=1;i<=2;i++){let b=$(i===1?'navMargins':'navScenarios');b.classList.toggle('hidden',!allowed(i));b.classList.toggle('active',analysisView===String(i));}
-if(analysisView!=='candy'&&!allowed(+analysisView))analysisView='candy';show('studio',analysisView==='candy');show('analysisPanel',analysisView!=='candy');$('navCandy').classList.toggle('active',analysisView==='candy');if(analysisView!=='candy')renderAnalysis();}
+function showAnalysisHub(){
+  const isInst=role==='instructor'&&teacher();
+  // Instructor activity navigation is independent of the Candy Game view.
+  // It remains visible before/after opening a class so it cannot disappear when
+  // the legacy game renderer resets its own panels.
+  const active=isInst || (!!config && !!team && role==='student');
+  show('analysisHub',active);
+  if(!active){show('analysisPanel',false);show('dataManager',false);return;}
+  const allowed=i=>isInst || config?.analysisUnlocked?.[i-1]===true;
+  if(analysisView==='reset'&&!isInst)analysisView='candy';
+  if((analysisView==='1'||analysisView==='2')&&!allowed(+analysisView))analysisView='candy';
+  for(let i=1;i<=2;i++){
+    const b=$(i===1?'navMargins':'navScenarios');
+    b.classList.toggle('hidden',!allowed(i));
+    b.classList.toggle('active',analysisView===String(i));
+  }
+  show('navReset',isInst);
+  $('navReset').classList.toggle('active',analysisView==='reset');
+  $('navCandy').classList.toggle('active',analysisView==='candy');
+  const ready=Boolean(config);
+  show('dataManager',analysisView==='reset'&&isInst);
+  show('analysisPanel',ready && (analysisView==='1'||analysisView==='2'));
+  // Leave the instructor's Create/Open class card available when no class exists.
+  show('studio',analysisView==='candy' && (isInst || (!!team && ready)));
+  if(ready && (analysisView==='1'||analysisView==='2'))renderAnalysis();
+}
 function readUserValue(key){const t=role==='instructor'?reviewTeam:team;return analysisValues(t)[key]}
 function renderAnalysis(){if(analysisView==='candy'||!config)return;const i=+analysisView,inst=role==='instructor'&&teacher(),v=analysisValues(inst?reviewTeam:team);
 $('analysisPill').textContent='CASE ACTIVITY '+i;$('analysisTitle').textContent=i===1?'Who earns the margin?':'Which Eco7 launch creates the most incremental value?';
@@ -139,11 +166,14 @@ let origCleanup=cleanup;cleanup=function(){stopAnalysis.forEach(f=>f());stopAnal
 let origRender=render;render=function(){origRender();showAnalysisHub()};let origSetRole=setRole;setRole=function(v){origSetRole(v);showAnalysisHub()};let origListen=listenClass;
 listenClass=async function(code){stopAnalysis.forEach(f=>f());stopAnalysis=[];analysisData={Red:null,Green:null};await origListen(code);let names=teacher()?['Red','Green']:[team];for(let t of names){if(!t)continue;stopAnalysis.push(onSnapshot(analysisRef(t),snap=>{analysisData[t]=snap.exists()?snap.data():null;if(analysisView!=='candy')renderAnalysis()},err=>{console.warn('Case analysis sync',err.message)}));}showAnalysisHub()};
 function openAnalysisView(next){
+  if(next==='reset' && !teacher())return;
   analysisView=next;
-  try {
-    if(next==='candy') render(); else showAnalysisHub();
-    $('analysisNav').scrollIntoView({behavior:'auto',block:'start'});
-  } catch(error){
+  try{
+    if(next==='candy')render();
+    else showAnalysisHub();
+    if(!config && next!=='candy')alertMsg('Open or create a class in Instructor view to work with this activity.');
+    $('analysisNav').scrollIntoView({behavior:'instant',block:'start'});
+  }catch(error){
     console.error('Activity navigation failed:',error);
     alertMsg('Unable to open the selected activity: '+error.message);
   }
@@ -151,6 +181,7 @@ function openAnalysisView(next){
 $('navCandy').onclick=()=>openAnalysisView('candy');
 $('navMargins').onclick=()=>openAnalysisView('1');
 $('navScenarios').onclick=()=>openAnalysisView('2');
+$('navReset').onclick=()=>openAnalysisView('reset');
 $('analysisTeam').onchange=()=>{reviewTeam=$('analysisTeam').value;renderAnalysis()};
 $('analysisSolutions').onclick=()=>{solutionVisible=!solutionVisible;renderAnalysis()};
 $('analysisUnlock').onclick=async()=>{if(!teacher())return;let arr=[...(config.analysisUnlocked||[false,false])];arr[+analysisView-1]=!arr[+analysisView-1];try{await updateDoc(roomRef(),{analysisUnlocked:arr})}catch(e){alertMsg('Unlock failed: '+e.message)}};
