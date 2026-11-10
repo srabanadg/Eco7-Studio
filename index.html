@@ -26,8 +26,35 @@ button.danger{background:#a43239;color:white}
 .calc-preview.invalid{color:#ad333a}
 .case-group-pill{background:#e9f4f2;border-radius:20px;padding:3px 9px;font-size:12px}
 .team-status{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.team-status span{border-radius:20px;border:1px solid #b6ced0;padding:4px 10px;font-size:12px;background:white}.team-status .done{background:#e7f4f0;border-color:#9cccbc}
+</style><style>
+
+/* v6 corrected worksheets: aligned to approved standalone calculation test. */
+.wrap{max-width:1420px}
+#analysisPanel{overflow:hidden}
+.case-sheet-wrap{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:9px;margin:10px 0}
+.case-sheet{min-width:1040px;width:100%;font-size:12px;border-collapse:separate;border-spacing:0;white-space:nowrap}
+.case-sheet th,.case-sheet td{padding:8px 10px;border-bottom:1px solid #e1e8eb;border-right:1px solid #e1e8eb;vertical-align:middle;text-align:right}
+.case-sheet thead th{background:#e8eff0;font-weight:750;color:#19414e;position:sticky;top:0;z-index:2}
+.case-sheet thead th:first-child,.case-sheet tbody td:first-child{position:sticky;left:0;text-align:left;white-space:normal;min-width:230px;z-index:3;background:#fff}
+.case-sheet thead th:first-child{background:#e8eff0;z-index:4}
+.case-sheet tbody td.case-given{background:#eaf3f0;font-variant-numeric:tabular-nums}
+.case-sheet tbody td.case-na{background:#f5f7f8;color:#82949a;text-align:center}
+.case-sheet tbody td.case-edit{background:#f0f7ff;padding:5px}
+.case-sheet tbody tr.case-total td{background:#e3f3ec;font-weight:700}
+.case-sheet tbody tr.case-total td:first-child{background:#d5eadf}
+.case-sheet input[data-analysis]{width:100%;min-width:113px;max-width:none;font-size:12px;text-align:right;padding:7px;border:1px solid #b4cbd8}
+.case-key{font-size:11px;font-weight:700;color:#27694e;margin-top:3px;text-align:right;white-space:normal}
+.case-note{font-size:12px;color:var(--muted);margin:7px 0 17px}
+.case-scenario-title{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin:23px 0 7px}
+.case-scenario-title h3{margin:0}
+.case-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.case-summary-card{border:1px solid var(--line);border-radius:10px;background:#fbfdfd;padding:14px;min-width:0}
+.case-summary-card strong{display:block}.case-summary-card span{font-size:12px;color:var(--muted)}
+.case-summary-card .metrics{margin-top:10px;line-height:1.7;font-size:12px}
+@media(max-width:800px){.case-summary{grid-template-columns:1fr}.case-sheet thead th:first-child,.case-sheet tbody td:first-child{min-width:190px}}
+
 </style></head><body>
-<header><div class="row"><div><h1>Get Me My Candy</h1><div class="sub">BUS 702 · Eco7 · Distribution Game Studio <span style="font-size:11px;opacity:.8;white-space:nowrap">| v5: Formulas + 5 Case Teams</span></div></div><span class="status" id="connection">Connecting to Firebase…</span></div></header>
+<header><div class="row"><div><h1>Get Me My Candy</h1><div class="sub">BUS 702 · Eco7 · Distribution Game Studio <span style="font-size:11px;opacity:.8;white-space:nowrap">| v6: Corrected case calculations</span></div></div><span class="status" id="connection">Connecting to Firebase…</span></div></header>
 <main class="wrap">
 <section class="panel" id="rolePanel"><div class="row"><div class="viewtabs"><button type="button" id="studentTab" class="active">Team view</button><button type="button" id="instructorTab">Instructor view</button></div><span class="tag" id="identity"></span></div>
 <div id="teamJoin"><p>Enter your class code and select your team. One browser per group submits decisions. Choose Red/Green for the Candy Game, or Team 1–5 for the case worksheets.</p><div class="topbar"><div><label for="studentRoom">Class code</label><input id="studentRoom" value="BUS702-ECO7" autocomplete="off"></div><div><label for="teamPick">Team</label><select id="teamPick" style="width:170px;padding:10px;border:1px solid #b6c7cc;border-radius:7px"><optgroup label="Candy Game"><option value="Red">Red</option><option value="Green">Green</option></optgroup><optgroup label="Case Activities"><option value="Team 1">Team 1</option><option value="Team 2">Team 2</option><option value="Team 3">Team 3</option><option value="Team 4">Team 4</option><option value="Team 5">Team 5</option></optgroup></select></div><button id="join" type="button">Join team</button></div><p class="small muted" id="joinStatus"></p></div>
@@ -134,15 +161,52 @@ onAuthStateChanged(auth,async u=>{user=u;$('connection').textContent=u?(u.isAnon
 let analysisView='candy',reviewTeam='Team 1',solutionVisible=false;
 let analysisData=Object.fromEntries(caseTeams.map(t=>[t,null])),stopAnalysis=[];
 let caseDraft=Object.fromEntries(caseTeams.map(t=>[t,{}]));
-const analysisRDefs=[
-  ['Conventional',3.25,.50,.125,1.20,7.109375],['Synthetic',7,.60,.125,1.95,12.25],
-  ['Private label',4.75,.65,.15,null,null],['Eco7 full',6.75,.55,.125,2.01,13.2890625],
-  ['Eco7 discounted',5.25,.50,.10,2.01,11.8125]
+// Approved workbook-derived case model (identical to corrected offline test)
+const channels=[{id:'A',name:'Aventage fast lube',size:4400},{id:'O',name:'Other fast lube',size:1600},{id:'I',name:'Other independents',size:6500},{id:'AA',name:'AvellinAuto',size:436}];
+const products=[
+ {id:'conv',name:'Avellin conventional',retail:3.25,om:.50,wm:.125,cogs:1.20},
+ {id:'syn',name:'Avellin synthetic',retail:7.00,om:.60,wm:.125,cogs:1.95},
+ {id:'pl',name:'Private-label synthetic',retail:4.75,om:.65,wm:.15,cogs:null},
+ {id:'full',name:'Eco7 · full price',retail:6.75,om:.55,wm:.125,cogs:2.01},
+ {id:'disc',name:'Eco7 · discounted',retail:5.25,om:.50,wm:.10,cogs:2.01},
+ {id:'afull',name:'AvellinAuto · full',auto:true,base:'full',cogs:2.01,bonus:.75},
+ {id:'adisc',name:'AvellinAuto · discounted',auto:true,base:'disc',cogs:2.01,bonus:.75}
 ];
-const money2=v=>v===null||!Number.isFinite(v)?'—':'$'+v.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});
-const decimal=v=>v===null||!Number.isFinite(v)?'—':Number(v.toFixed(4)).toLocaleString('en-CA',{maximumFractionDigits:4});
-const dollarRound=v=>v===null||!Number.isFinite(v)?'—':Math.round(v).toLocaleString('en-CA');
-// A constrained arithmetic parser for student calculation cells. Never evaluates JavaScript.
+const productMap=Object.fromEntries(products.map(p=>[p.id,p]));
+function econ(p){
+ if(p.auto){const x=econ(productMap[p.base]),rev=x.avRev,cogs=p.cogs*5,gp=rev-cogs+p.bonus;return {retail:null,rev:null,om:null,outGP:null,whRev:null,wm:null,whGP:null,avRev:rev,cogsQuart:p.cogs,cogsChange:cogs,avGP:gp,avPct:100*gp/rev};}
+ const rev=p.retail*5,outGP=rev*p.om,whRev=rev-outGP,whGP=whRev*p.wm,avRev=whRev-whGP;
+ const cogs=p.cogs==null?null:p.cogs*5,avGP=cogs==null?null:avRev-cogs;
+ return {retail:p.retail,rev,om:p.om*100,outGP,whRev,wm:p.wm*100,whGP,avRev:p.id==='pl'?null:avRev,cogsQuart:p.cogs,cogsChange:cogs,avGP,avPct:avGP==null?null:100*avGP/avRev};
+}
+const eCon=econ(productMap.conv),eFull=econ(productMap.full),eDisc=econ(productMap.disc),eAutoFull=econ(productMap.afull),eAutoDisc=econ(productMap.adisc);
+const scenarioDefs=[
+ {name:'Aventage only · full price',penetration:[.95,0,0,1],monthly:[105,105,26.25,150],eco:'full'},
+ {name:'Broad distribution · full price',penetration:[.75,.45,.30,1],monthly:[105,105,26.25,150],eco:'full'},
+ {name:'Broad distribution · discounted',penetration:[.90,.60,.40,1],monthly:[135,135,33.75,180],eco:'disc'}
+];
+function model(s){
+ const ex=econ(productMap[s.eco]),aa=econ(productMap[s.eco==='full'?'afull':'adisc']);
+ return channels.map((c,i)=>{const carrying=c.size*s.penetration[i],annual=s.monthly[i]*12,upgrades=carrying*annual;
+ const rev=ex.avRev,baseRev=eCon.avRev,incRev=rev-baseRev,ecoGP=i===3?aa.avGP:ex.avGP,baseGP=eCon.avGP,incGP=ecoGP-baseGP;
+ return {size:c.size,penetration:s.penetration[i]*100,carrying,monthly:s.monthly[i],annual,upgrades,ecoRev:rev,baseRev,incRev,ecoGP,baseGP,incGP,totalRev:upgrades*incRev,totalGP:upgrades*incGP};});
+}
+const models=scenarioDefs.map(model);
+const marginRows=[
+ ['retail','Retail price per quart','given','money'],['rev','Retail revenue per oil change (5 quarts)','given','money'],
+ ['om','Gross margin · DIFM outlet','given','percent'],['outGP','Gross profit · DIFM outlet','edit','money'],
+ ['whRev','Wholesaler revenue / change','edit','money'],['wm','Gross margin · wholesaler','given','percent'],['whGP','Gross profit · wholesaler','edit','money'],
+ ['avRev','Avellin revenue / change','edit','money'],['cogsQuart','Avellin COGS per quart','given','money'],['cogsChange','Avellin COGS per change','given','money'],
+ ['avGP','Avellin gross profit / change','edit','money'],['avPct','Avellin gross margin','edit','percent']
+];
+const scenarioRows=[
+ ['size','Available stores','given','int'],['penetration','Eco7 penetration','given','percent'],['carrying','Stores carrying Eco7','edit','int'],
+ ['monthly','Monthly upgrades per carrying store','given','number'],['annual','Annual upgrades per carrying store','edit','number'],['upgrades','Total annual Eco7 upgrades','edit','int'],
+ ['ecoRev','Avellin revenue per Eco7 change','given','money4'],['baseRev','Avellin revenue per conventional change','given','money4'],['incRev','Incremental Avellin revenue per change','edit','money4'],
+ ['ecoGP','Avellin gross profit per Eco7 change','given','money4'],['baseGP','Avellin gross profit per conventional change','given','money4'],['incGP','Incremental Avellin gross profit per change','edit','money4'],
+ ['totalRev','Annual incremental revenue','edit','money'],['totalGP','Annual incremental gross profit','edit','money']
+];
+
 function evaluateCell(value){
  const original=String(value??'').trim();
  if(!original)return null;
@@ -200,13 +264,15 @@ function evaluateCell(value){
  if(!Number.isFinite(result)||Math.abs(result)>1e15)throw new Error('Result is outside supported range');
  return result;
 }
-function formattedCell(n,id){
- if(n===null)return '';
- // Display a sensible number of decimals for monetary/percentage work, without changing calculation precision.
- const pct=/^m_avellinPct_/.test(id);
- const digits=2;
- return Number(n.toFixed(digits)).toLocaleString('en-CA',{maximumFractionDigits:digits});
+function caseFormat(n,t='money'){
+ if(n===null||n===undefined||!Number.isFinite(n))return '—';
+ if(t==='percent')return n.toLocaleString('en-CA',{maximumFractionDigits:2})+'%';
+ if(t==='int')return n.toLocaleString('en-CA',{maximumFractionDigits:0});
+ if(t==='number')return n.toLocaleString('en-CA',{maximumFractionDigits:2});
+ if(t==='money4')return '$'+n.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:4});
+ return '$'+n.toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});
 }
+function formattedCell(n,id,format){return n===null?'':caseFormat(n,format||'number');}
 function updateCellDisplay(input,focused=false){
  const source=input.dataset.expression??input.value;
  const note=input.nextElementSibling;
@@ -218,7 +284,7 @@ function updateCellDisplay(input,focused=false){
  }
  try{
   const number=evaluateCell(source);
-  const output=formattedCell(number,input.dataset.analysis);
+  const output=formattedCell(number,input.dataset.analysis,input.dataset.format);
   input.classList.remove('invalid');input.classList.add('has-formula');
   if(note?.classList.contains('calc-preview')){note.textContent='= '+output;note.classList.remove('invalid');}
   if(!focused)input.value=output;
@@ -243,27 +309,7 @@ function bindCalculationInputs(){
  });
 }
 
-const marginsRows=[
- ['price','Retail price per quart','given'],['revenue','Revenue per 5-quart change','given'],
- ['outletMargin','DIFM outlet gross margin','given'],['outletGP','DIFM outlet gross profit','edit'],
- ['wholesaleRev','Wholesaler revenue','edit'],['wholesaleMargin','Wholesaler gross margin','given'],
- ['wholesaleGP','Wholesaler gross profit','edit'],['avellinRev','Avellin revenue','edit'],
- ['cogs','Avellin COGS per change','given'],['avellinGP','Avellin gross profit','edit'],
- ['avellinPct','Avellin gross margin %','edit']
-];
-function marginAnswer(col){let [_,price,om,wm,cogs]=analysisRDefs[col],revenue=price*5,outletGP=revenue*om,wholesaleRev=revenue-outletGP,wholesaleGP=wholesaleRev*wm,avellinRev=wholesaleRev-wholesaleGP;return {price,revenue,outletMargin:om,outletGP,wholesaleRev,wholesaleMargin:wm,wholesaleGP,avellinRev:col===2?null:avellinRev,cogs:cogs===null?null:cogs*5,avellinGP:cogs===null?null:avellinRev-cogs*5,avellinPct:cogs===null?null:(avellinRev-cogs*5)/avellinRev}}
-// Case exhibit 6 inputs, by launch scenario.
-const scenarios=[
- {name:'Aventage only · full price',adoption:[.95,0,0],upgrades:[105,0,150],unit:'full'},
- {name:'Broad distribution · full price',adoption:[.75,.45,.30],upgrades:[105,105*.25,150],unit:'full'},
- {name:'Broad distribution · discounted',adoption:[.90,.60,.40],upgrades:[135,135*.25,180],unit:'discount'}
-];
-function scenarioModel(i){let s=scenarios[i],av=4400*s.adoption[0],other=1600*s.adoption[1],ind=6500*s.adoption[2],aa=436;
-let u=[(av+other)*s.upgrades[0]*12,ind*s.upgrades[1]*12,aa*s.upgrades[2]*12];
-let revE=s.unit==='full'?13.2890625:11.8125,gpE=s.unit==='full'?3.2390625:1.7625;let revBase=7.109375,gpBase=1.109375;
-let incR=revE-revBase,incG=gpE-gpBase;
-return {adoption:s.adoption,stores:[av+other,ind,aa],annual:[s.upgrades[0]*12,s.upgrades[1]*12,s.upgrades[2]*12],upgrades:u,rev:[incR*u[0],incR*u[1],incR*u[2]],gp:[incG*u[0],incG*u[1],(incG+.75)*u[2]],incR,incG,revE,gpE};}
-const scenarioRows=[['penetration','Adoption / penetration','given'],['stores','Stores carrying Eco7','edit'],['annual','Upgrades per store per year','edit'],['upgrades','Total annual Eco7 upgrades','edit'],['incR','Incremental Avellin revenue per change','given'],['incG','Incremental Avellin gross profit per change','given'],['rev','Annual incremental revenue','edit'],['gp','Annual incremental gross profit','edit']];
+
 function analysisRef(t){return doc(db,'eco7CandyClasses',room,'analysis',t)}
 function analysisValues(t){return {...(analysisData[t]?.values||{}),...(caseDraft[t]||{})}}
 function showAnalysisHub(){
@@ -294,19 +340,81 @@ function showAnalysisHub(){
  if(ready && (analysisView==='1'||analysisView==='2'))renderAnalysis();
 }
 function readUserValue(key){const t=role==='instructor'?reviewTeam:team;return analysisValues(t)[key]}
-function renderAnalysis(){if(analysisView==='candy'||!config)return;const i=+analysisView,inst=role==='instructor'&&teacher(),v=analysisValues(inst?reviewTeam:caseTeam);
-$('analysisPill').textContent='CASE ACTIVITY '+i;$('analysisTitle').textContent=i===1?'Who earns the margin?':'Which Eco7 launch creates the most incremental value?';
-$('analysisIntro').textContent=i===1?'Complete the missing channel economics per five-quart oil change. Green cells are given in Exhibit 5; blue cells are for your calculations.':'Use Exhibits 5 and 6 to calculate annual upgrades, incremental revenue and incremental gross profit under three alternative Eco7 launch strategies.';
-show('analysisTeacherControls',inst);show('analysisExport',inst);$('analysisUnlock').textContent=config.analysisUnlocked?.[i-1]?'Hide from students':'Unlock for students';$('analysisSolutions').textContent=solutionVisible?'Hide instructor answer key':'Show instructor answer key';$('analysisSave').textContent=inst?'Save corrected calculations':'Submit calculations';
-$('analysisStudentPrompt').textContent=i===1?'For each product, work backward from the retail price and channel margins. Express the final Avellin margin as a percentage (e.g., 24.37), not a decimal. Private-label manufacturer economics are not provided.':'Calculate results for each distribution scenario. Use full precision during calculations; enter dollars as whole numbers or decimals. For AvellinAuto, the solution assumes an additional $0.75 gross profit per Eco7 oil change.';
-if(i===1){let head='<tr><th>Per 5-quart oil change</th>'+analysisRDefs.map(r=>'<th>'+esc(r[0])+'</th>').join('')+'</tr>';let body=marginsRows.map(([key,label,type])=>'<tr><td>'+label+'</td>'+analysisRDefs.map((_,c)=>{let ans=marginAnswer(c),id='m_'+key+'_'+c,x=ans[key];if(x===null)return '<td class="given">N/A</td>';if(type==='given')return '<td class="given">'+(key.toLowerCase().includes('margin')?decimal(x*100)+'%':money2(x))+'</td>';let val=v[id]??'';return '<td class="calc"><input data-analysis="'+id+'" aria-label="'+esc(label+' '+analysisRDefs[c][0])+'" inputmode="text" placeholder="Calculate" value="'+esc(val)+'" />'+(inst&&solutionVisible?'<div class="small muted">Key: '+(key==='avellinPct'?decimal(x*100)+'%':money2(x))+'</div>':'')+'</td>'}).join('')+'</tr>').join('');$('analysisTable').innerHTML='<table class="analysis-table"><thead>'+head+'</thead><tbody>'+body+'</tbody></table>';
-}else{let html='';for(let j=0;j<3;j++){let m=scenarioModel(j),s=scenarios[j],col=['Fast lube','Other independents','AvellinAuto'];html+='<h3 style="margin:19px 0 8px">Scenario '+(j+1)+' · '+esc(scenarios[j].name)+'</h3><div class="small muted" style="margin:0 0 10px">Given: 4,400 Aventage fast-lube stores, 1,600 other fast-lube stores, 6,500 other independents and 436 AvellinAuto stores. Adoption: Aventage '+decimal(s.adoption[0]*100)+'%, other fast lube '+decimal(s.adoption[1]*100)+'%, other independents '+decimal(s.adoption[2]*100)+'%, AvellinAuto 100%. Monthly Eco7 upgrades: fast lube '+decimal(s.upgrades[0])+', other independents '+decimal(s.upgrades[1])+', AvellinAuto '+decimal(s.upgrades[2])+'.</div><table class="analysis-table"><thead><tr><th>Annual figures unless noted</th>'+col.map(x=>'<th>'+x+'</th>').join('')+'<th>Total</th></tr></thead><tbody>';
-for(let [key,label,type] of scenarioRows){html+='<tr><td>'+label+'</td>';for(let c=0;c<3;c++){let id='p_'+j+'_'+key+'_'+c,answer=key==='penetration'?m.adoption[c]:key==='incR'?m.incR:key==='incG'?m.incG:m[key][c];if(type==='given'){html+='<td class="given">'+(key==='penetration'?decimal(answer*100)+'%':money2(answer))+'</td>';}else{html+='<td class="calc"><input data-analysis="'+id+'" inputmode="text" aria-label="'+esc(scenarios[j].name+' '+label+' '+col[c])+'" value="'+esc(v[id]??'')+'" placeholder="Calculate"/>'+(inst&&solutionVisible?'<div class="small muted">Key: '+dollarRound(answer)+'</div>':'')+'</td>';}}if(key==='rev'||key==='gp'){let answer=m[key].reduce((a,b)=>a+b,0),id='p_'+j+'_'+key+'_total';html+='<td class="calc"><input data-analysis="'+id+'" inputmode="text" value="'+esc(v[id]??'')+'" placeholder="Total" />'+(inst&&solutionVisible?'<div class="small muted">Key: '+dollarRound(answer)+'</div>':'')+'</td>';}else html+='<td class="given">—</td>';html+='</tr>';}html+='</tbody></table>';} $('analysisTable').innerHTML=html;}
-const currentTeam=inst?reviewTeam:caseTeam;
-const filled=t=>Object.entries(analysisData[t]?.values||{}).filter(([k,v])=>k.startsWith(i===1?'m_':'p_')&&String(v).trim()!=='').length;
-$('analysisSaved').textContent=currentTeam+' · '+(filled(currentTeam)?'Submitted ('+filled(currentTeam)+' cells)':'Not yet submitted');
-if(inst)$('analysisTeamStatus').innerHTML=caseTeams.map(t=>'<span class="'+(filled(t)?'done':'')+'">'+t+': '+(filled(t)?filled(t)+' cells':'No submission')+'</span>').join('');
-bindCalculationInputs();}
+const V6_MARGIN_PREFIX='v6_m_';
+const V6_SCENARIO_PREFIX='v6_p_';
+function makeCaseCell(key,expected,format,values,isTeacher){
+ const raw=String(values[key]??'');
+ return `<td class="case-edit"><input data-analysis="${key}" data-format="${format}" type="text" inputmode="text" value="${esc(raw)}" placeholder="Calculate" autocomplete="off" spellcheck="false" aria-label="Calculation ${key}" />${isTeacher&&solutionVisible?`<div class="case-key">Key: ${caseFormat(expected,format)}</div>`:''}</td>`;
+}
+function renderAnalysis(){
+ if(analysisView!=='1'&&analysisView!=='2'||!config)return;
+ const i=Number(analysisView),inst=role==='instructor'&&teacher(),working=inst?reviewTeam:caseTeam;
+ const v=analysisValues(working);
+ $('analysisPill').textContent='CASE ACTIVITY '+i;
+ $('analysisTitle').textContent=i===1?'Who earns the margins?':'Incremental value of the Eco7 launch';
+ $('analysisIntro').textContent=i===1
+  ?'Work backward from the DIFM outlet price through the wholesaler to Avellin. Calculate the missing values for each pricing alternative, including AvellinAuto.'
+  :'Use Exhibits 5 and 6 to compare three launch strategies. Treat Aventage and other fast-lube outlets separately, and keep AvellinAuto at 100% penetration.';
+ show('analysisTeacherControls',inst);show('analysisExport',inst);
+ $('analysisUnlock').textContent=config.analysisUnlocked?.[i-1]?'Hide from students':'Unlock for students';
+ $('analysisSolutions').textContent=solutionVisible?'Hide instructor answer key':'Show instructor answer key';
+ $('analysisSave').textContent=inst?'Save corrected calculations':'Submit calculations';
+ $('analysisStudentPrompt').innerHTML=i===1
+  ?'Green = given case information; blue = your calculation. AvellinAuto earns <strong>$0.75 more gross profit per Eco7 change</strong>. Private-label manufacturer profits are not provided.'
+  :'Three scenarios: Aventage only/full price; broad/full price; broad/discounted. In each, <strong>AvellinAuto penetration is 100%</strong>. Other independent upgrade volume is 25% of the fast-lube upgrade rate.';
+ let html='';
+ if(i===1){
+  const head=products.map(p=>`<th>${esc(p.name)}</th>`).join('');
+  const rows=marginRows.map(([key,label,kind,fmt])=>{
+   const cells=products.map(p=>{
+    const answer=econ(p)[key];
+    if(answer===null||answer===undefined)return '<td class="case-na">N/A</td>';
+    if(kind==='given')return `<td class="case-given">${caseFormat(answer,fmt)}</td>`;
+    return makeCaseCell(`${V6_MARGIN_PREFIX}${p.id}_${key}`,answer,fmt,v,inst);
+   }).join('');
+   return `<tr><td>${esc(label)}</td>${cells}</tr>`;
+  }).join('');
+  html=`<div class="case-sheet-wrap"><table class="case-sheet"><thead><tr><th>Per five-quart oil change</th>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  html+='<p class="case-note">AvellinAuto bypasses the independent DIFM outlet and wholesaler rows; the relevant values are marked N/A.</p>';
+ }else{
+  for(let j=0;j<3;j++){
+   const s=scenarioDefs[j],rows=models[j],name=`Scenario ${j+1}: ${s.name}`;
+   html+=`<div class="case-scenario-title"><h3>${esc(name)}</h3><span class="pill">AvellinAuto 100% · ${s.eco==='full'?'Full':'Discounted'} price</span></div>`;
+   const header=channels.map(c=>`<th>${esc(c.name)}</th>`).join('');
+   let body='';
+   for(const [key,label,kind,fmt] of scenarioRows){
+    const cells=rows.map((data,c)=>kind==='given'
+     ? `<td class="case-given">${caseFormat(data[key],fmt)}</td>`
+     :makeCaseCell(`${V6_SCENARIO_PREFIX}${j}_${c}_${key}`,data[key],fmt,v,inst)).join('');
+    const totalAllowed=['size','carrying','upgrades','totalRev','totalGP'].includes(key);
+    const sum=totalAllowed?rows.reduce((a,b)=>a+b[key],0):null;
+    const total=!totalAllowed?'<td class="case-na">—</td>'
+     :kind==='given'?`<td class="case-given">${caseFormat(sum,fmt)}</td>`
+     :makeCaseCell(`${V6_SCENARIO_PREFIX}${j}_total_${key}`,sum,fmt,v,inst);
+    body+=`<tr class="${['totalRev','totalGP'].includes(key)?'case-total':''}"><td>${esc(label)}</td>${cells}${total}</tr>`;
+   }
+   html+=`<div class="case-sheet-wrap"><table class="case-sheet"><thead><tr><th>Channel economics and volume</th>${header}<th>Overall total</th></tr></thead><tbody>${body}</tbody></table></div>`;
+   html+=`<p class="case-note">Other independent stores: ${s.eco==='full'?'105 × 25% = 26.25':'135 × 25% = 33.75'} upgrades per month; AvellinAuto: ${s.monthly[3]} upgrades per month at 100% penetration.</p>`;
+  }
+  html+='<h3>Scenario comparison</h3><div class="case-summary">';
+  for(let j=0;j<3;j++){
+   const rows=models[j],s=scenarioDefs[j];
+   const total=k=>rows.reduce((a,b)=>a+b[k],0);
+   const entered=key=>{const raw=v[`${V6_SCENARIO_PREFIX}${j}_total_${key}`]??'';try{return String(raw).trim()?caseFormat(evaluateCell(raw),key==='upgrades'?'int':'money'):'Not entered';}catch{return 'Check expression';}};
+   const details=inst&&solutionVisible
+      ?`<div class="metrics">Annual upgrades: ${caseFormat(total('upgrades'),'int')}<br>Incremental revenue: ${caseFormat(total('totalRev'),'money')}<br>Incremental gross profit: ${caseFormat(total('totalGP'),'money')}</div>`
+      :`<div class="metrics">Your incremental revenue: ${entered('totalRev')}<br>Your incremental gross profit: ${entered('totalGP')}</div>`;
+   html+=`<div class="case-summary-card"><strong>Scenario ${j+1}</strong><span>${esc(s.name)}</span>${details}</div>`;
+  }
+  html+='</div>';
+ }
+ $('analysisTable').innerHTML=html;
+ const prefix=i===1?V6_MARGIN_PREFIX:V6_SCENARIO_PREFIX;
+ const filled=t=>Object.entries(analysisData[t]?.values||{}).filter(([k,x])=>k.startsWith(prefix)&&String(x).trim()!=='').length;
+ $('analysisSaved').textContent=working+' · '+(filled(working)?`Submitted (${filled(working)} cells)`:'Not yet submitted');
+ if(inst)$('analysisTeamStatus').innerHTML=caseTeams.map(t=>`<span class="${filled(t)?'done':''}">${t}: ${filled(t)?filled(t)+' cells':'No submission'}</span>`).join('');
+ bindCalculationInputs();
+}
 let origCleanup=cleanup;cleanup=function(){stopAnalysis.forEach(f=>f());stopAnalysis=[];analysisData=Object.fromEntries(caseTeams.map(t=>[t,null]));origCleanup()};
 let origRender=render;render=function(){origRender();showAnalysisHub()};let origSetRole=setRole;setRole=function(v){origSetRole(v);showAnalysisHub()};let origListen=listenClass;
 listenClass=async function(code){stopAnalysis.forEach(f=>f());stopAnalysis=[];analysisData=Object.fromEntries(caseTeams.map(t=>[t,null]));await origListen(code);let names=teacher()?caseTeams:[caseTeam];for(let t of names){if(!t)continue;stopAnalysis.push(onSnapshot(analysisRef(t),snap=>{analysisData[t]=snap.exists()?snap.data():null;if(analysisView==='1'||analysisView==='2')renderAnalysis()},err=>{console.warn('Case analysis sync',err.message);if(t===caseTeam)alertMsg('Case worksheet connection failed: '+err.message)}));}showAnalysisHub()};
